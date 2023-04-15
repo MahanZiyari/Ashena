@@ -5,7 +5,7 @@
         android:id="@+id/contactsFragment"
         android:title="@string/contacts"
         android:icon="@drawable/baseline_person_outline_24"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/favoritesFragment"
         android:title="@string/favorites"

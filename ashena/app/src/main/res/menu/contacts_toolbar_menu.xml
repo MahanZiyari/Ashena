@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/actionSearch"
+        android:icon="@drawable/round_search_24"
+        android:title="@string/search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:iconTint="@color/black"
+        app:showAsAction="ifRoom|collapseActionView" />
+
+    <item android:title="Sort By">
+        <menu>
+            <group>
+                <item android:title="First Name" />
+                <item android:title="Last Name" />
+                <item android:title="Group" />
+            </group>
+        </menu>
+    </item>
+
+</menu>
