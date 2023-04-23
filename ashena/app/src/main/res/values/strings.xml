@@ -6,4 +6,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ashena">Ashena</string>
     <string name="search">search</string>
+    <string name="first_name">First Name</string>
+    <string name="groups">group</string>
+    <string name="add_to_contacts">Add to contacts</string>
 </resources>

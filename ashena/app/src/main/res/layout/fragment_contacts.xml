@@ -20,6 +20,11 @@
             app:menu="@menu/contacts_toolbar_menu"
             app:title="@string/ashena"
             app:titleCentered="true" />
+        <!--Contacts List-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/contacts"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
         <!--FAB-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_contact_fab"
