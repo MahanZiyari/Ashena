@@ -5,14 +5,14 @@ import androidx.room.PrimaryKey
 import ziyari.mahan.ashena.utils.CONTACTS_TABLE_NAME
 
 @Entity(tableName = CONTACTS_TABLE_NAME)
-data class Contact(
+data class ContactEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    val firstName: String = "",
-    val lastName: String = "",
-    val number: String = "",
-    val group: Group = Group.FAMILY,
-    val favorites: Boolean = false
+    var id: Int = 0,
+    var firstName: String = "",
+    var lastName: String = "",
+    var number: String = "",
+    var group: String = Group.FAMILY.name,
+    var favorites: Boolean = false
 )
 
 enum class Group {
