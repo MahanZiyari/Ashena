@@ -64,6 +64,7 @@ class AddContactsFragment : BottomSheetDialogFragment() {
                 contactEntity.number = number
                 if (checkForEmptyString(firstName, lastName, number)) {
                     viewModel.addContactToDatabase(contactEntity)
+                    dismiss()
                 } else {
                     Toast.makeText(context, "Empty Field", Toast.LENGTH_SHORT).show()
                 }
