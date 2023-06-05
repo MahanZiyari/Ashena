@@ -62,6 +62,8 @@ class AddContactsFragment : BottomSheetDialogFragment() {
                 contactEntity.firstName = firstName
                 contactEntity.lastName = lastName
                 contactEntity.number = number
+//                contactEntity.profilePicture = context?.getString(R.string.avatar_api, firstName)!!
+                contactEntity.profilePicture = "https://api.dicebear.com/6.x/initials/png?seed=$firstName"
                 if (checkForEmptyString(firstName, lastName, number)) {
                     viewModel.addContactToDatabase(contactEntity)
                     dismiss()

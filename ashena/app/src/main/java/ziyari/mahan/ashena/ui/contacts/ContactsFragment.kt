@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ziyari.mahan.ashena.R
@@ -49,6 +51,11 @@ class ContactsFragment : Fragment() {
                     layoutManager = LinearLayoutManager(context)
                     adapter = contactAdapter
                 }
+            }
+            contactAdapter.setOnItemClickListener { contactEntity ->
+                //Toast.makeText(context, contactEntity.id.toString(), Toast.LENGTH_SHORT).show()
+                val direction = ContactsFragmentDirections.actionToDetails(contactEntity.id)
+                findNavController().navigate(direction)
             }
             // Fab
             addContactFab.setOnClickListener {

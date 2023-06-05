@@ -6,9 +6,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.ContactItemBinding
+import ziyari.mahan.ashena.utils.generateRandomColor
 import javax.inject.Inject
 
 class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter.ViewHolder>() {
@@ -41,10 +43,15 @@ class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter
 
         @SuppressLint("SetTextI18n")
         fun bind(item: ContactEntity) {
+            var avatarUrlWithFirstName = context.getString(R.string.avatar_api, item.firstName)
+//            var avatarUrlWithFirstName = "https://api.dicebear.com/6.x/initials/png?seed=Alex"
             binding.apply {
-                contactPic.setImageResource(R.drawable.avatar)
+                contactPic.clipToOutline = true
+                contactPic.load(item.profilePicture)
                 contactName.text = item.firstName + " " + item.lastName
-
+                contactItemLayout.setOnClickListener {
+                    onItemClickListener(item)
+                }
             }
         }
     }
@@ -56,7 +63,10 @@ class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter
         diffUtils.dispatchUpdatesTo(this)
     }
 
-    class ContactsDiffUtils(private val oldItem: List<ContactEntity>, private val newItem: List<ContactEntity>) : DiffUtil.Callback() {
+    class ContactsDiffUtils(
+        private val oldItem: List<ContactEntity>,
+        private val newItem: List<ContactEntity>
+    ) : DiffUtil.Callback() {
 
         override fun getOldListSize(): Int {
             return oldItem.size

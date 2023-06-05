@@ -9,10 +9,29 @@
         android:id="@+id/contactsFragment"
         android:name="ziyari.mahan.ashena.ui.contacts.ContactsFragment"
         android:label="fragment_contacts"
-        tools:layout="@layout/fragment_contacts" />
+        tools:layout="@layout/fragment_contacts">
+
+    </fragment>
+    <!--Global action to details fragment-->
+    <action
+        android:id="@+id/action_to_details"
+        app:destination="@id/detailsFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim"
+        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+        app:popExitAnim="@anim/nav_default_pop_exit_anim"
+        app:popUpToInclusive="false" />
     <fragment
         android:id="@+id/favoritesFragment"
         android:name="ziyari.mahan.ashena.ui.favorites.FavoritesFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_favorites" />
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="ziyari.mahan.ashena.ui.details.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" >
+        <argument android:name="ContactId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

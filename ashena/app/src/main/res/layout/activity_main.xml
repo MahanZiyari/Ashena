@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/contacts_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimaryVariant"
+        android:elevation="5dp"
+        app:menu="@menu/contacts_toolbar_menu"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/ashena"
+        app:titleCentered="true" />
+
     <fragment
         android:id="@+id/nav_host"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -13,7 +24,7 @@
         android:layout_height="0dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@id/bottom_nav"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/contacts_toolbar"
         app:navGraph="@navigation/main_nav" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView

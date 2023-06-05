@@ -12,7 +12,8 @@ data class ContactEntity(
     var lastName: String = "",
     var number: String = "",
     var group: String = Group.FAMILY.name,
-    var favorites: Boolean = false
+    var favorites: Boolean = false,
+    var profilePicture: String = ""
 )
 
 enum class Group {
