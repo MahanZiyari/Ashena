@@ -1,5 +1,7 @@
 package ziyari.mahan.ashena.ui.details
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -104,6 +106,13 @@ class DetailsFragment : Fragment() {
             }
             detailsGroupsSpinner.setSelection(pos)
 
+            // Calling Contact
+            phoneCall.setOnClickListener {
+                val intent = Intent(Intent.ACTION_DIAL)
+                val numberToPassByIntent = Uri.parse("tel:${contact.number}")
+                intent.setData(numberToPassByIntent)
+                startActivity(intent)
+            }
         }
     }
 
