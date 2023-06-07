@@ -45,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     isOnDetailsScreen = false
                     bottomNav.visibility = View.VISIBLE
+                    contactsToolbar.visibility = View.VISIBLE
                     contactsToolbar.title = getString(R.string.ashena)
                 }
             }
@@ -55,10 +56,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.contacts_toolbar_menu, menu)
-        return true
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         return true
     }
 
