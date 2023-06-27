@@ -10,11 +10,12 @@ import dagger.hilt.components.SingletonComponent
 import ziyari.mahan.ashena.data.database.ContactDatabase
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.utils.CONTACTS_DB_NAME
+import ziyari.mahan.ashena.utils.PermissionsManager
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule {
+object GlobalModule {
 
     @Singleton
     @Provides
@@ -34,4 +35,9 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideContactDao(database: ContactDatabase) = database.contactDao()
+
+
+    @Singleton
+    @Provides
+    fun providePermissionManager(@ApplicationContext context: Context) = PermissionsManager(context = context)
 }

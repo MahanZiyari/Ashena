@@ -19,3 +19,8 @@ fun Spinner.setUpListWithAdapter(items: List<String>, onItemSelected: (String) -
         }
     }
 }
+
+fun String.extractNumbers(): Int {
+    val regex = Regex("[^0-9]")
+    return regex.replace(this, "").toInt()
+}

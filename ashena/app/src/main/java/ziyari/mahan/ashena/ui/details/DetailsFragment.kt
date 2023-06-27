@@ -55,6 +55,20 @@ class DetailsFragment : Fragment() {
 
             //Inflating Menu
             handleToolbar()
+            // Calling Contact
+            phoneCall.setOnClickListener {
+                val intent = Intent(Intent.ACTION_DIAL)
+                val numberToPassByIntent = Uri.parse("tel:${contact.number}")
+                intent.setData(numberToPassByIntent)
+                startActivity(intent)
+            }
+
+            //message
+            message.setOnClickListener {
+                val intent = Intent(Intent.ACTION_SENDTO)
+                intent.setData(Uri.parse("smsto:${contact.number}"))
+                startActivity(intent)
+            }
 
         }
     }
@@ -75,6 +89,9 @@ class DetailsFragment : Fragment() {
 
                     R.id.save_icon -> {
                         //TODO("Save Contact and return to main screen")
+                        val newFirstName = firstnameTextField.text.toString()
+                        val newLastName = lastnameTextField.text.toString()
+                        val newPhoneNumber = phoneNumberTextField.text.toString()
                         //TODO show a snackbar for successfull operation
                         true
                     }
@@ -103,13 +120,6 @@ class DetailsFragment : Fragment() {
             }
             detailsGroupsSpinner.setSelection(pos)
 
-            // Calling Contact
-            phoneCall.setOnClickListener {
-                val intent = Intent(Intent.ACTION_DIAL)
-                val numberToPassByIntent = Uri.parse("tel:${contact.number}")
-                intent.setData(numberToPassByIntent)
-                startActivity(intent)
-            }
         }
     }
 
