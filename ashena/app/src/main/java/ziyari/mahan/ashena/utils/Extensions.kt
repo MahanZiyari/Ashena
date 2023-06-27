@@ -24,3 +24,7 @@ fun String.extractNumbers(): Int {
     val regex = Regex("[^0-9]")
     return regex.replace(this, "").toInt()
 }
+
+fun String.removeSpaces(): String {
+    return this.replace("\\s".toRegex(), "")
+}

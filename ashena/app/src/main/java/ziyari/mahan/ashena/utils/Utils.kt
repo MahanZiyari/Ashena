@@ -17,5 +17,5 @@ fun generateRandomColor(): String {
     val g = random.nextInt(256)
     val b = random.nextInt(256)
     val color = Color.rgb(r, g, b)
-    return String.format("#%06X", 0xFFFFFF and color)
+    return String.format("%06X", 0xFFFFFF and color)
 }

@@ -14,6 +14,7 @@ import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.FragmentAddContactsBinding
 import ziyari.mahan.ashena.utils.checkForEmptyString
+import ziyari.mahan.ashena.utils.generateRandomColor
 import ziyari.mahan.ashena.utils.setUpListWithAdapter
 import ziyari.mahan.ashena.viewmodel.AddContactViewModel
 import javax.inject.Inject
@@ -63,7 +64,7 @@ class AddContactsFragment : BottomSheetDialogFragment() {
                 contactEntity.lastName = lastName
                 contactEntity.number = number
 //                contactEntity.profilePicture = context?.getString(R.string.avatar_api, firstName)!!
-                contactEntity.profilePicture = "https://api.dicebear.com/6.x/initials/png?seed=$firstName"
+                contactEntity.profilePicture = "https://api.dicebear.com/6.x/initials/png?seed=$firstName&backgroundColor=${generateRandomColor()}"
                 if (checkForEmptyString(firstName, lastName, number)) {
                     viewModel.addContactToDatabase(contactEntity)
                     dismiss()

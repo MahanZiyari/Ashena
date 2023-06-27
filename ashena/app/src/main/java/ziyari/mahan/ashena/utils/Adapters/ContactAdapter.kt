@@ -43,7 +43,7 @@ class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter
 
         @SuppressLint("SetTextI18n")
         fun bind(item: ContactEntity) {
-            var avatarUrlWithFirstName = context.getString(R.string.avatar_api, item.firstName)
+            var avatarUrlWithFirstName = context.getString(R.string.avatar_api, item.firstName, generateRandomColor())
 //            var avatarUrlWithFirstName = "https://api.dicebear.com/6.x/initials/png?seed=Alex"
             binding.apply {
                 contactPic.clipToOutline = true

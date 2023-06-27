@@ -9,6 +9,8 @@ import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.database.ContactDao
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.utils.extractNumbers
+import ziyari.mahan.ashena.utils.generateRandomColor
+import ziyari.mahan.ashena.utils.removeSpaces
 import javax.inject.Inject
 
 class ContactHomeScreenRepository @Inject constructor(private val contactDao: ContactDao, @ApplicationContext  private val context: Context) {
@@ -75,7 +77,7 @@ class ContactHomeScreenRepository @Inject constructor(private val contactDao: Co
                         favorites = starred,
                         number = phoneNumber,
                         group = label ?: "",
-                        profilePicture = context.getString(R.string.avatar_api, name)
+                        profilePicture = context.getString(R.string.avatar_api, name.removeSpaces(), generateRandomColor())
                 )
                 contacts.add(contactEntity)
             }

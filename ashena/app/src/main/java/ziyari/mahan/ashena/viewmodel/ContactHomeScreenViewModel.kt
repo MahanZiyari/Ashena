@@ -37,14 +37,18 @@ class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScre
         val allContactsFromBothSources = mutableSetOf<ContactEntity>()
 
         contactHomeScreenRepository.getContacts().flatMapConcat { phoneContacts ->
+            Log.i(DEBUG_TAG, "phone: $phoneContacts")
             allContactsFromBothSources.addAll(phoneContacts)
             contactHomeScreenRepository.getAllContactsFromDatabase()
         }.collect { databaseContacts ->
             allContactsFromBothSources.addAll(databaseContacts)
+            val finalContactsList = allContactsFromBothSources
+                .toList()
+                .sortedBy { it.firstName }
             allContacts.postValue(
                 DataStatus.success(
-                    allContactsFromBothSources.toList(),
-                    allContactsFromBothSources.isEmpty()
+                    finalContactsList,
+                    finalContactsList.isEmpty()
                 )
             )
         }
