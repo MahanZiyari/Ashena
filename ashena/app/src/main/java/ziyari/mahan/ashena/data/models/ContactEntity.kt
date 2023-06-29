@@ -13,7 +13,8 @@ data class ContactEntity(
     var number: String = "",
     var group: String = Group.FAMILY.name,
     var favorites: Boolean = false,
-    var profilePicture: String = ""
+    var profilePicture: String = "",
+    var isFromPhone: Boolean = false
 )
 
 enum class Group {

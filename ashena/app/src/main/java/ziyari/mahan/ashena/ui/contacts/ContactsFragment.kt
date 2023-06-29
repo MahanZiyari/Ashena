@@ -75,7 +75,7 @@ class ContactsFragment : Fragment() {
                 }
             }
             contactAdapter.setOnItemClickListener { contactEntity ->
-                val direction = ContactsFragmentDirections.actionToDetails(contactEntity.id)
+                val direction = ContactsFragmentDirections.actionToDetails(contactEntity.id, contactEntity.isFromPhone)
                 findNavController().navigate(direction)
             }
             // Fab

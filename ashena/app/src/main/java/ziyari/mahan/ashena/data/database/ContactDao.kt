@@ -26,4 +26,7 @@ interface ContactDao {
 
     @Query("Select * From $CONTACTS_TABLE_NAME Where id= :id")
     fun getSingleContact(id: Int): Flow<ContactEntity>
+
+    @Query("SELECT EXISTS (SELECT 1 FROM $CONTACTS_TABLE_NAME WHERE id = :contactID)")
+    suspend fun existsContact(contactID: Int): Boolean
 }

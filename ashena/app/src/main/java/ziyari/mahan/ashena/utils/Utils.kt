@@ -1,6 +1,7 @@
 package ziyari.mahan.ashena.utils
 
 import android.graphics.Color
+import android.util.Log
 import java.util.Random
 
 fun checkForEmptyString(vararg strings: String): Boolean {
@@ -18,4 +19,8 @@ fun generateRandomColor(): String {
     val b = random.nextInt(256)
     val color = Color.rgb(r, g, b)
     return String.format("%06X", 0xFFFFFF and color)
+}
+
+fun showDebugLog(message: String) {
+    Log.i(DEBUG_TAG, message)
 }

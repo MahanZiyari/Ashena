@@ -31,7 +31,9 @@
         android:name="ziyari.mahan.ashena.ui.details.DetailsFragment"
         android:label="fragment_details"
         tools:layout="@layout/fragment_details" >
-        <argument android:name="ContactId"
+        <argument android:name="contact_id"
             app:argType="integer" />
+        <argument android:name="is_contact_from_phone"
+            app:argType="boolean"/>
     </fragment>
 </navigation>

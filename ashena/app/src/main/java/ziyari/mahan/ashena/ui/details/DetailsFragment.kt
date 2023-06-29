@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
@@ -17,8 +19,11 @@ import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.data.models.Group
 import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
+import ziyari.mahan.ashena.utils.PermissionsManager
 import ziyari.mahan.ashena.utils.setUpListWithAdapter
+import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -30,6 +35,7 @@ class DetailsFragment : Fragment() {
     // ViewModel
     private val viewModel: DetailsViewModel by viewModels()
     // Other
+    @Inject lateinit var permissionsManager: PermissionsManager
     private val args: DetailsFragmentArgs by navArgs()
     private  var contact: ContactEntity = ContactEntity()
 
@@ -45,9 +51,16 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
-            // SettingUp Spinner
             val passedId = args.contactId ?: 0
-            viewModel.getContactFromDatabaseWith(passedId)
+            val isContactFromPhone = args.isContactFromPhone
+            if (isContactFromPhone) {
+                showDebugLog("device scope")
+                viewModel.getContactFromPhone(passedId)
+            } else {
+                showDebugLog("DB scope")
+                viewModel.getContactFromDatabaseWith(passedId)
+            }
+            //viewModel.getContactFromPhone(3)
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
                 fillFieldsWithContactInfo()

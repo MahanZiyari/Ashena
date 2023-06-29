@@ -6,4 +6,5 @@ import javax.inject.Inject
 
 class AddContactRepository @Inject constructor(private val dao: ContactDao) {
     suspend fun insertContact(contactEntity: ContactEntity) = dao.insertContact(contactEntity)
+
 }

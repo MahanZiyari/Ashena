@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.data.models.Group
@@ -23,4 +24,6 @@ class AddContactViewModel @Inject constructor(private val repository: AddContact
     fun addContactToDatabase(contactEntity: ContactEntity) = viewModelScope.launch(Dispatchers.IO) {
         repository.insertContact(contactEntity)
     }
+
+
 }
