@@ -17,7 +17,6 @@ class DetailsRepository @Inject constructor(
     fun getContactWith(id: Int) = dao.getSingleContact(id)
     suspend fun updateContact(contactEntity: ContactEntity) = dao.updateContact(contactEntity)
     suspend fun removeContact(contactEntity: ContactEntity) = dao.removeContact(contactEntity)
-    suspend fun isContactExistInDatabase(contactId: Int) = dao.existsContact(contactId)
 
     fun getContactFromPhone(id: Int)  = flow<ContactEntity> {
         val contentResolver = context.contentResolver
@@ -48,5 +47,9 @@ class DetailsRepository @Inject constructor(
         }
 
         cursor?.close()
+    }
+
+    fun editPhoneContact(contactId: Int) {
+
     }
 }

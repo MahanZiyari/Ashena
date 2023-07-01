@@ -12,10 +12,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import ziyari.mahan.ashena.R
@@ -25,7 +27,9 @@ import ziyari.mahan.ashena.ui.addcontacts.AddContactsFragment
 import ziyari.mahan.ashena.utils.Adapters.ContactAdapter
 import ziyari.mahan.ashena.utils.DEBUG_TAG
 import ziyari.mahan.ashena.utils.PermissionsManager
+import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.ContactHomeScreenViewModel
+import ziyari.mahan.ashena.viewmodel.SharedViewModel
 import javax.inject.Inject
 
 
@@ -43,6 +47,8 @@ class ContactsFragment : Fragment() {
     @Inject
     lateinit var permissionsManager: PermissionsManager
     private val viewModel: ContactHomeScreenViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+
 
     private val requestPermissionLauncher = registerForActivityResult(
             ActivityResultContracts.RequestPermission()
@@ -66,13 +72,17 @@ class ContactsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
             requestPermission()
-
             viewModel.allContacts.observe(viewLifecycleOwner) {
                 contactAdapter.setData(it.data!!)
                 contacts.apply {
                     layoutManager = LinearLayoutManager(context)
                     adapter = contactAdapter
                 }
+            }
+
+            sharedViewModel.snackbarMessage.observe(viewLifecycleOwner) {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
             contactAdapter.setOnItemClickListener { contactEntity ->
                 val direction = ContactsFragmentDirections.actionToDetails(contactEntity.id, contactEntity.isFromPhone)

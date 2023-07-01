@@ -3,22 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/fav_icon"
-        android:icon="@drawable/baseline_star_outline_24"
-        android:title="@string/search"
-        app:iconTint="@color/black"
-        app:showAsAction="ifRoom|collapseActionView" />
-
-    <item
         android:id="@+id/save_icon"
         android:icon="@drawable/baseline_save_24"
         android:title="save"
+        app:iconTint="?attr/colorOnPrimary"
         android:iconTint="@color/black"
         app:showAsAction="always"/>
 
     <item
         android:id="@+id/trash_icon"
         android:icon="@drawable/baseline_delete_outline_24"
+        app:iconTint="?attr/colorOnPrimary"
         android:title="delete"
         app:showAsAction="always"/>
 

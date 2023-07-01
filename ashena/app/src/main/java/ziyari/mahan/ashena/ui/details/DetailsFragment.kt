@@ -1,12 +1,15 @@
 package ziyari.mahan.ashena.ui.details
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,9 +23,11 @@ import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.data.models.Group
 import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
 import ziyari.mahan.ashena.utils.PermissionsManager
+import ziyari.mahan.ashena.utils.generateRandomColor
 import ziyari.mahan.ashena.utils.setUpListWithAdapter
 import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
+import ziyari.mahan.ashena.viewmodel.SharedViewModel
 import javax.inject.Inject
 
 
@@ -34,6 +39,7 @@ class DetailsFragment : Fragment() {
     private val binding get() = _binding
     // ViewModel
     private val viewModel: DetailsViewModel by viewModels()
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     // Other
     @Inject lateinit var permissionsManager: PermissionsManager
     private val args: DetailsFragmentArgs by navArgs()
@@ -83,6 +89,17 @@ class DetailsFragment : Fragment() {
                 startActivity(intent)
             }
 
+            favContact.setOnClickListener {
+                contact.favorites = !contact.favorites
+                if (contact.favorites) {
+                    favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
+                    favContact.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.yellow))
+                } else {
+                    favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
+                    favContact.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
+                }
+            }
+
         }
     }
 
@@ -95,16 +112,23 @@ class DetailsFragment : Fragment() {
             }
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.fav_icon -> {
-                        TODO("making Contact Fav and change fav icon appearance")
-                        true
-                    }
 
                     R.id.save_icon -> {
-                        //TODO("Save Contact and return to main screen")
                         val newFirstName = firstnameTextField.text.toString()
                         val newLastName = lastnameTextField.text.toString()
                         val newPhoneNumber = phoneNumberTextField.text.toString()
+                        val newPicture = resources.getString(R.string.avatar_api, newFirstName, generateRandomColor())
+                        contact.firstName = newFirstName
+                        contact.lastName = newLastName
+                        contact.number = newPhoneNumber
+                        contact.profilePicture = newPicture
+                        if (contact.isFromPhone) {
+                            // Save to Phone
+                        } else {
+                            // Save to DB
+                            viewModel.updateDatabaseContact(contact)
+                            findNavController().navigateUp()
+                        }
                         //TODO show a snackbar for successfull operation
                         true
                     }
@@ -149,6 +173,7 @@ class DetailsFragment : Fragment() {
                 // Respond to positive button press
                 viewModel.removeContact(contact)
                 dialog.dismiss()
+                sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
                 findNavController().navigateUp()
             }
             .show()

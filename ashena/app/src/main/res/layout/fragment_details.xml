@@ -75,20 +75,20 @@
         android:padding="10dp"
         android:src="@drawable/round_message_24"
         app:layout_constraintBottom_toTopOf="@id/secondDivider"
-        app:layout_constraintEnd_toStartOf="@+id/block_contact"
+        app:layout_constraintEnd_toStartOf="@+id/fav_contact"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/phone_call"
         app:layout_constraintTop_toBottomOf="@id/firstDivider"
         app:tint="@color/charcoal"/>
 
     <ImageView
-        android:id="@+id/block_contact"
+        android:id="@+id/fav_contact"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:layout_margin="8dp"
         android:background="@drawable/bg_rounded_stroke"
         android:padding="10dp"
-        android:src="@drawable/round_block_24"
+        android:src="@drawable/baseline_star_outline_24"
         app:layout_constraintBottom_toTopOf="@id/secondDivider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
