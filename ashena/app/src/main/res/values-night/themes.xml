@@ -1,0 +1,20 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.Ashena" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/teal_600</item>
+        <item name="colorPrimaryVariant">@color/teal_500</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/Blue_700</item>
+        <item name="colorSecondaryVariant">@color/Blue_800</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!--Surface-->
+        <item name="colorSurface">@color/darkSlategray</item>
+        <item name="colorOnSurface">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/teal_500</item>
+        <!-- Customize your theme here. -->
+        <item name="bottomSheetDialogTheme">@style/CustomBottomSheetDialog</item>
+    </style>
+</resources>

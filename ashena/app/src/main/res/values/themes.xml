@@ -9,6 +9,9 @@
         <item name="colorSecondary">@color/teal_600</item>
         <item name="colorSecondaryVariant">@color/teal_500</item>
         <item name="colorOnSecondary">@color/black</item>
+        <!--Surface-->
+        <item name="colorSurface">@color/whiteSmoke</item>
+        <item name="colorOnSurface">@color/charcoal</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

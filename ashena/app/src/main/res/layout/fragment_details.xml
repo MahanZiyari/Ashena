@@ -129,7 +129,6 @@
     </com.google.android.material.textfield.TextInputLayout>
 
 
-    <!--Phone Number-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lastNameTextLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -151,6 +150,7 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <!--Phone number-->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/phoneNumberTextLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -192,7 +192,8 @@
             app:layout_constraintBottom_toBottomOf="@id/groups_text"
             app:layout_constraintEnd_toStartOf="@id/groups_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/groups_text" />
+            app:layout_constraintTop_toTopOf="@id/groups_text"
+            app:tint="?attr/colorOnSurface" />
         <!--Title-->
         <TextView
             android:id="@+id/groups_text"
@@ -201,7 +202,7 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginStart="16dp"
             android:text="@string/groups"
-            android:textColor="@color/black"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="22sp"
             app:layout_constraintBottom_toBottomOf="@+id/cardView2"
             app:layout_constraintStart_toEndOf="@id/groups_icon"
@@ -212,7 +213,7 @@
             android:layout_width="150dp"
             android:layout_height="40dp"
             android:layout_margin="3dp"
-            app:cardBackgroundColor="@color/white"
+            android:background="@drawable/bg_rounded_stroke"
             app:cardCornerRadius="5dp"
             app:cardElevation="1dp"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -33,9 +33,9 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/windowBackground"
         android:foreground="?attr/selectableItemBackground"
-        app:backgroundTint="@color/Blue_600"
-        app:itemIconTint="@color/black"
-        app:itemTextColor="@color/black"
+        app:backgroundTint="?attr/colorPrimaryVariant"
+        app:itemIconTint="?attr/colorOnPrimary"
+        app:itemTextColor="?attr/colorOnPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_navigation_menu" />
 

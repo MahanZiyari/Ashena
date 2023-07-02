@@ -58,9 +58,9 @@ class AddContactsFragment : BottomSheetDialogFragment() {
             saveContact.setOnClickListener {
                 contactEntity.id = 0
                 contactEntity.isFromPhone = false
-                val firstName = firstNameEdt.text.toString()
-                val lastName = lastNameEdt.text.toString()
-                val number = phoneNumber.text.toString()
+                val firstName = firstnameTextField.text.toString()
+                val lastName = lastnameTextField.text.toString()
+                val number = phoneNumberTextField.text.toString()
                 contactEntity.firstName = firstName
                 contactEntity.lastName = lastName
                 contactEntity.number = number

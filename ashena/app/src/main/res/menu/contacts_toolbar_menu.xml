@@ -7,10 +7,10 @@
         android:icon="@drawable/round_search_24"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:iconTint="@color/black"
         app:showAsAction="ifRoom|collapseActionView" />
 
-    <item android:title="Sort By">
+    <item
+        android:title="Sort By">
         <menu>
             <group>
                 <item android:title="First Name" />

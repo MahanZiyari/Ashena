@@ -26,7 +26,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="24dp"
             android:src="@drawable/round_add_24"
-            app:tint="@color/white"
+            app:tint="?attr/colorOnPrimary"
             app:backgroundTint="?attr/colorPrimaryVariant"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
