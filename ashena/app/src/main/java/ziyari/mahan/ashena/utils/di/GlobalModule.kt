@@ -2,6 +2,7 @@ package ziyari.mahan.ashena.utils.di
 
 import android.content.Context
 import androidx.room.Room
+import contacts.core.Contacts
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,4 +41,8 @@ object GlobalModule {
     @Singleton
     @Provides
     fun providePermissionManager(@ApplicationContext context: Context) = PermissionsManager(context = context)
+
+    @Singleton
+    @Provides
+    fun provideContactApi(@ApplicationContext context: Context) = Contacts(context)
 }

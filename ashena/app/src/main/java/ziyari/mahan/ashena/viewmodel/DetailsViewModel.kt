@@ -23,7 +23,7 @@ class DetailsViewModel @Inject constructor(private val repository: DetailsReposi
     }
 
     fun getContactFromPhone(id: Int) = viewModelScope.launch {
-        repository.getContactFromPhone(id).collect {
+        repository.getSpecificContactWith(id).collect {
             contact.postValue(it)
         }
     }
@@ -32,12 +32,20 @@ class DetailsViewModel @Inject constructor(private val repository: DetailsReposi
         repository.updateContact(contactEntity)
     }
 
-    fun updatePhoneContact(contactId: Int) {
+    fun updatePhoneContact(contactId: Int) = viewModelScope.launch(Dispatchers.IO) {
 
     }
 
     fun removeContact(contactEntity: ContactEntity) = viewModelScope.launch {
         repository.removeContact(contactEntity)
+    }
+
+    fun removeContactFromDevice(id: Long): Boolean {
+        var deleteResult = false
+        viewModelScope.launch {
+            deleteResult = repository.removeContactFromDevice(id)
+        }
+        return deleteResult
     }
 
 }

@@ -1,5 +1,6 @@
 package ziyari.mahan.ashena.ui
 
+import android.Manifest
 import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,11 +8,14 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.forEach
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.databinding.ActivityMainBinding
@@ -52,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.contacts_toolbar_menu, menu)

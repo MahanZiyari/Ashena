@@ -1,22 +1,22 @@
 package ziyari.mahan.ashena.ui.details
 
+import android.Manifest
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
@@ -25,7 +25,6 @@ import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
 import ziyari.mahan.ashena.utils.PermissionsManager
 import ziyari.mahan.ashena.utils.generateRandomColor
 import ziyari.mahan.ashena.utils.setUpListWithAdapter
-import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
 import ziyari.mahan.ashena.viewmodel.SharedViewModel
 import javax.inject.Inject
@@ -37,13 +36,19 @@ class DetailsFragment : Fragment() {
     // Binding
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding
+
     // ViewModel
     private val viewModel: DetailsViewModel by viewModels()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+
     // Other
-    @Inject lateinit var permissionsManager: PermissionsManager
+    @Inject
+    lateinit var permissionsManager: PermissionsManager
     private val args: DetailsFragmentArgs by navArgs()
-    private  var contact: ContactEntity = ContactEntity()
+    private var contact: ContactEntity = ContactEntity()
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,17 +61,17 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding?.apply {
-            val passedId = args.contactId ?: 0
+            requestNeededPermissions()
+            val passedId = args.contactId
             val isContactFromPhone = args.isContactFromPhone
             if (isContactFromPhone) {
-                showDebugLog("device scope")
                 viewModel.getContactFromPhone(passedId)
             } else {
-                showDebugLog("DB scope")
                 viewModel.getContactFromDatabaseWith(passedId)
             }
-            //viewModel.getContactFromPhone(3)
+
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
                 fillFieldsWithContactInfo()
@@ -74,7 +79,7 @@ class DetailsFragment : Fragment() {
 
             //Inflating Menu
             handleToolbar()
-            // Calling Contact
+
             phoneCall.setOnClickListener {
                 val intent = Intent(Intent.ACTION_DIAL)
                 val numberToPassByIntent = Uri.parse("tel:${contact.number}")
@@ -82,7 +87,7 @@ class DetailsFragment : Fragment() {
                 startActivity(intent)
             }
 
-            //message
+
             message.setOnClickListener {
                 val intent = Intent(Intent.ACTION_SENDTO)
                 intent.setData(Uri.parse("smsto:${contact.number}"))
@@ -93,10 +98,12 @@ class DetailsFragment : Fragment() {
                 contact.favorites = !contact.favorites
                 if (contact.favorites) {
                     favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
-                    favContact.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.yellow))
+                    favContact.imageTintList =
+                        ColorStateList.valueOf(resources.getColor(R.color.yellow))
                 } else {
                     favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
-                    favContact.imageTintList = ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
+                    favContact.imageTintList =
+                        ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
                 }
             }
 
@@ -117,7 +124,11 @@ class DetailsFragment : Fragment() {
                         val newFirstName = firstnameTextField.text.toString()
                         val newLastName = lastnameTextField.text.toString()
                         val newPhoneNumber = phoneNumberTextField.text.toString()
-                        val newPicture = resources.getString(R.string.avatar_api, newFirstName, generateRandomColor())
+                        val newPicture = resources.getString(
+                            R.string.avatar_api,
+                            newFirstName,
+                            generateRandomColor()
+                        )
                         contact.firstName = newFirstName
                         contact.lastName = newLastName
                         contact.number = newPhoneNumber
@@ -150,7 +161,12 @@ class DetailsFragment : Fragment() {
             lastnameTextField.setText(contact.lastName)
             contactsPictureProfile.load(contact.profilePicture)
             phoneNumberTextField.setText(contact.number)
-            val groups = mutableListOf(Group.FAMILY.name, Group.WORK.name, Group.COSTUMERS.name, Group.FRIENDS.name)
+            val groups = mutableListOf(
+                Group.FAMILY.name,
+                Group.WORK.name,
+                Group.COSTUMERS.name,
+                Group.FRIENDS.name
+            )
             val pos = groups.indexOf(contact.group)
             detailsGroupsSpinner.setUpListWithAdapter(groups) {
                 contact.group = it
@@ -162,6 +178,7 @@ class DetailsFragment : Fragment() {
 
 
     private fun showDeleteConfirmationWarning() {
+        var deleteResult = false
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Moving to Trash?")
             .setMessage(resources.getString(R.string.delete_warning))
@@ -171,11 +188,46 @@ class DetailsFragment : Fragment() {
             }
             .setPositiveButton("Move to Trash") { dialog, which ->
                 // Respond to positive button press
-                viewModel.removeContact(contact)
-                dialog.dismiss()
-                sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
-                findNavController().navigateUp()
+                if (contact.isFromPhone) {
+                    deleteResult = viewModel.removeContactFromDevice(contact.id.toLong())
+                } else {
+                    viewModel.removeContact(contact)
+                }
+                if (deleteResult) {
+                    dialog.dismiss()
+                    //sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
+                    findNavController().navigateUp()
+                } else {
+                    Toast.makeText(requireContext(), "Error: ", Toast.LENGTH_SHORT).show()
+                }
+            }.show()
+    }
+
+    private fun requestNeededPermissions() {
+        PermissionX.init(this)
+            .permissions(Manifest.permission.WRITE_CONTACTS)
+            .onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "Core fundamental are based on these permissions",
+                    "OK",
+                    "Cancel"
+                )
             }
-            .show()
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    Toast.makeText(
+                        requireContext(),
+                        "All permissions are granted",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "These permissions are denied: $deniedList",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
     }
 }

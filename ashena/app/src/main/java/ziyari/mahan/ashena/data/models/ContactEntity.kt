@@ -8,6 +8,7 @@ import ziyari.mahan.ashena.utils.CONTACTS_TABLE_NAME
 data class ContactEntity(
     @PrimaryKey(autoGenerate = true)
     var id: Int = 0,
+    var lookupKey: String? = null,
     var firstName: String = "",
     var lastName: String = "",
     var number: String = "",

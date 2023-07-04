@@ -36,10 +36,9 @@ class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScre
     fun getAllContacts() = viewModelScope.launch {
         val allContactsFromBothSources = mutableSetOf<ContactEntity>()
 
-        contactHomeScreenRepository.getContacts().flatMapConcat { phoneContacts ->
-            Log.i(DEBUG_TAG, "phone: $phoneContacts")
+        contactHomeScreenRepository.getAllContactsFromDatabase().flatMapConcat { phoneContacts ->
             allContactsFromBothSources.addAll(phoneContacts)
-            contactHomeScreenRepository.getAllContactsFromDatabase()
+            contactHomeScreenRepository.getDeviceContactsUsingReborn()
         }.collect { databaseContacts ->
             allContactsFromBothSources.addAll(databaseContacts)
             val finalContactsList = allContactsFromBothSources

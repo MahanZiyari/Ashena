@@ -77,4 +77,10 @@ dependencies {
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     // Timber
     implementation 'com.jakewharton.timber:timber:5.0.1'
+    //PermissionX
+    implementation 'com.guolindev.permissionx:permissionx:1.7.1'
+    // Contact Reborn
+    implementation 'com.github.vestrel00.contacts-android:core:0.3.0'
+    implementation 'com.github.vestrel00.contacts-android:async:0.3.0'
+    implementation 'com.github.vestrel00.contacts-android:permissions:0.3.0'
 }

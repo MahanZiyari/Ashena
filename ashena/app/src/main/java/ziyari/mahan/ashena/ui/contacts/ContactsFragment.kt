@@ -1,31 +1,22 @@
 package ziyari.mahan.ashena.ui.contacts
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
-import ziyari.mahan.ashena.R
-import ziyari.mahan.ashena.databinding.FragmentAddContactsBinding
 import ziyari.mahan.ashena.databinding.FragmentContactsBinding
 import ziyari.mahan.ashena.ui.addcontacts.AddContactsFragment
 import ziyari.mahan.ashena.utils.Adapters.ContactAdapter
-import ziyari.mahan.ashena.utils.DEBUG_TAG
 import ziyari.mahan.ashena.utils.PermissionsManager
 import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.ContactHomeScreenViewModel
@@ -50,13 +41,6 @@ class ContactsFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
 
-    private val requestPermissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        Log.i(DEBUG_TAG, "permission status: $isGranted")
-        Toast.makeText(requireContext(), "Permission Status: $isGranted", Toast.LENGTH_SHORT).show()
-        if (isGranted) viewModel.getAllContacts() else viewModel.getAllContactsFromDb()
-    }
 
 
     override fun onCreateView(
@@ -71,7 +55,7 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
-            requestPermission()
+            requestToAccessContacts()
             viewModel.allContacts.observe(viewLifecycleOwner) {
                 contactAdapter.setData(it.data!!)
                 contacts.apply {
@@ -81,7 +65,6 @@ class ContactsFragment : Fragment() {
             }
 
             sharedViewModel.snackbarMessage.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
             contactAdapter.setOnItemClickListener { contactEntity ->
@@ -95,34 +78,27 @@ class ContactsFragment : Fragment() {
         }
     }
 
-    private fun requestPermission() {
-        when {
-            permissionsManager.hasReadContactsPermission() -> {
-                Log.i(DEBUG_TAG, "permission is already granted")
-                viewModel.getAllContacts()
-            }
 
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                    requireActivity(),
-                    Manifest.permission.READ_CONTACTS
-            ) -> {
-                // Additional rationale should be displayed
-                MaterialAlertDialogBuilder(requireContext())
-                        .setTitle("Why we need access to your contacts?")
-                        .setMessage("Grant that fucking access you piss of shit!!!")
-                        .setNeutralButton("OK") { dialog, _ ->
-                            dialog.dismiss()
-                        }.show()
-
-                requestPermissionLauncher
-                        .launch(Manifest.permission.READ_CONTACTS)
+    private fun requestToAccessContacts() {
+        PermissionX.init(this)
+            .permissions(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)
+            .onExplainRequestReason { scope, deniedList ->
+                scope.showRequestReasonDialog(
+                    deniedList,
+                    "Core fundamental are based on these permissions",
+                    "OK",
+                    "Cancel"
+                )
             }
-
-            else -> {
-                //requestPermissionLauncher.launch(Manifest.permission.READ_CONTACTS)
-                //permission has not been asked yet
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    showDebugLog("All Permission are Already Granted")
+                    viewModel.getAllContacts()
+                } else {
+                    showDebugLog("These permissions are denied: $deniedList")
+                    showDebugLog("These permissions are granted: $grantedList")
+                }
             }
-        }
     }
 
 }
