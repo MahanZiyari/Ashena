@@ -79,7 +79,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/phone_call"
         app:layout_constraintTop_toBottomOf="@id/firstDivider"
-        app:tint="@color/charcoal"/>
+        app:tint="@color/charcoal" />
 
     <ImageView
         android:id="@+id/fav_contact"
@@ -94,7 +94,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/message"
         app:layout_constraintTop_toBottomOf="@id/firstDivider"
-        app:tint="@color/charcoal"/>
+        app:tint="@color/charcoal" />
 
     <View
         android:id="@+id/secondDivider"
@@ -116,9 +116,11 @@
         android:layout_marginTop="8dp"
         android:hint="First Name"
         android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/lastNameTextLayout"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/secondDivider"
+        app:layout_constraintTop_toBottomOf="@+id/secondDivider"
         app:startIconDrawable="@drawable/baseline_person_outline_24">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -139,9 +141,11 @@
         android:layout_marginEnd="10dp"
         android:hint="Last Name"
         android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@+id/phoneNumberTextLayout"
         app:layout_constraintEnd_toEndOf="@id/firstnameTextlayout"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/firstnameTextlayout"
-        app:layout_constraintTop_toBottomOf="@id/firstnameTextlayout">
+        app:layout_constraintTop_toBottomOf="@+id/firstnameTextlayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/lastnameTextField"
@@ -160,9 +164,11 @@
         android:layout_marginTop="4dp"
         android:hint="Phone Number"
         android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/categoriesLay"
         app:layout_constraintEnd_toEndOf="@id/lastNameTextLayout"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/lastNameTextLayout"
-        app:layout_constraintTop_toBottomOf="@id/lastNameTextLayout"
+        app:layout_constraintTop_toBottomOf="@+id/lastNameTextLayout"
         app:startIconDrawable="@drawable/round_local_phone_24">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -177,10 +183,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_marginBottom="12dp"
         android:padding="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneNumberTextLayout">
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumberTextLayout">
 
         <ImageView
             android:id="@+id/groups_icon"

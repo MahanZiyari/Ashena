@@ -11,11 +11,16 @@ import android.util.Log
 import contacts.core.Contacts
 import contacts.core.equalTo
 import contacts.core.`in`
+import contacts.core.util.groupMembershipList
 import contacts.core.util.groupMemberships
 import contacts.core.util.lookupKeyIn
+import contacts.core.util.nameList
+import contacts.core.util.names
 import contacts.core.util.options
 import contacts.core.util.phones
+import contacts.core.util.setName
 import contacts.permissions.deleteWithPermission
+import contacts.permissions.updateWithPermission
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
@@ -43,17 +48,17 @@ class DetailsRepository @Inject constructor(
             .where { Contact.Id `in` listOf(id.toLong()) }
             .find().first()
 
-        val number = if (contact.phones().toList().isEmpty()) "0000" else contact.phones().toList().first().normalizedNumber
+        val number = if (contact.phones().toList().isEmpty()) "0000" else contact.phones().toList().first().number
         val group = if (contact.groupMemberships().toList().isEmpty()) "UNGroup" else contact.groupMemberships().toList().first().toString()
         
         val modelContact = ContactEntity(
             id = contact.id.toInt(),
-            firstName = contact.displayNamePrimary ?: "Unnamed",
-            lastName = "",
+            firstName = contact.names().first().givenName ?: "Unnamed",
+            lastName = contact.names().first().familyName ?: "Empty",
             profilePicture = contact.photoThumbnailUri.toString(),
             number = number ?: "",
             lookupKey = contact.lookupKey,
-            group = group ?: "",
+            group = group,
             favorites = contact.options()?.starred ?: false,
             isFromPhone = true
         )
@@ -65,8 +70,29 @@ class DetailsRepository @Inject constructor(
 
 
 
-    suspend fun modifyPhoneContact(contactId: Int) {
+    suspend fun modifyPhoneContact(contactEntity: ContactEntity): Boolean {
+        val contactToModify = contactApi
+            .query()
+            .where { Contact.Id `in` listOf(contactEntity.id.toLong()) }
+            .find().first()
 
+        val updateResult = contactApi
+            .updateWithPermission()
+            .contacts(contactToModify.mutableCopy {
+                setName {
+                    givenName = contactEntity.firstName
+                    familyName = contactEntity.lastName
+                }
+                phones().first().apply {
+                    number = contactEntity.number
+                }
+                options?.apply {
+                    starred = contactEntity.favorites
+                }
+            })
+            .commit()
+
+        return updateResult.isSuccessful
     }
 
     suspend fun removeContactFromDevice(id: Long): Boolean {

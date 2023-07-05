@@ -95,6 +95,7 @@ class ContactsFragment : Fragment() {
                     showDebugLog("All Permission are Already Granted")
                     viewModel.getAllContacts()
                 } else {
+                    viewModel.getAllContactsFromDb()
                     showDebugLog("These permissions are denied: $deniedList")
                     showDebugLog("These permissions are granted: $grantedList")
                 }

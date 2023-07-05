@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.load
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ziyari.mahan.ashena.R
@@ -25,6 +26,7 @@ import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
 import ziyari.mahan.ashena.utils.PermissionsManager
 import ziyari.mahan.ashena.utils.generateRandomColor
 import ziyari.mahan.ashena.utils.setUpListWithAdapter
+import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
 import ziyari.mahan.ashena.viewmodel.SharedViewModel
 import javax.inject.Inject
@@ -74,11 +76,13 @@ class DetailsFragment : Fragment() {
 
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
+                initializeFavoritesStatus()
                 fillFieldsWithContactInfo()
             }
 
             //Inflating Menu
             handleToolbar()
+            // Stating Favorites icon
 
             phoneCall.setOnClickListener {
                 val intent = Intent(Intent.ACTION_DIAL)
@@ -94,19 +98,35 @@ class DetailsFragment : Fragment() {
                 startActivity(intent)
             }
 
-            favContact.setOnClickListener {
-                contact.favorites = !contact.favorites
-                if (contact.favorites) {
-                    favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
-                    favContact.imageTintList =
-                        ColorStateList.valueOf(resources.getColor(R.color.yellow))
-                } else {
-                    favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
-                    favContact.imageTintList =
-                        ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
-                }
-            }
 
+
+
+        }
+    }
+
+    private fun FragmentDetailsBinding.initializeFavoritesStatus() {
+        showDebugLog("inside fav icon: ${contact.favorites}")
+        if (contact.favorites) {
+            favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
+            favContact.imageTintList =
+                ColorStateList.valueOf(resources.getColor(R.color.yellow))
+        } else {
+            favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
+            favContact.imageTintList =
+                ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
+        }
+
+        favContact.setOnClickListener {
+            contact.favorites = !contact.favorites
+            if (contact.favorites) {
+                favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
+                favContact.imageTintList =
+                    ColorStateList.valueOf(resources.getColor(R.color.yellow))
+            } else {
+                favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
+                favContact.imageTintList =
+                    ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
+            }
         }
     }
 
@@ -133,14 +153,21 @@ class DetailsFragment : Fragment() {
                         contact.lastName = newLastName
                         contact.number = newPhoneNumber
                         contact.profilePicture = newPicture
+
+                        var updateResult = false
                         if (contact.isFromPhone) {
                             // Save to Phone
+                            updateResult = viewModel.updatePhoneContact(contact)
                         } else {
                             // Save to DB
                             viewModel.updateDatabaseContact(contact)
-                            findNavController().navigateUp()
+                            updateResult = true
                         }
-                        //TODO show a snackbar for successfull operation
+
+                        if (updateResult)
+                            Snackbar.make(requireView(), "Contact Updated Successfully", Snackbar.LENGTH_SHORT).show()
+                        else
+                            Snackbar.make(requireView(), "Ooops something happened", Snackbar.LENGTH_SHORT).show()
                         true
                     }
 
@@ -195,7 +222,7 @@ class DetailsFragment : Fragment() {
                 }
                 if (deleteResult) {
                     dialog.dismiss()
-                    //sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
+                    sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
                     findNavController().navigateUp()
                 } else {
                     Toast.makeText(requireContext(), "Error: ", Toast.LENGTH_SHORT).show()

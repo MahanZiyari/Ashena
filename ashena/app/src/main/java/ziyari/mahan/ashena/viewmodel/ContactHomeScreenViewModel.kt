@@ -32,7 +32,6 @@ class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScre
         }
     }
 
-    @OptIn(FlowPreview::class)
     fun getAllContacts() = viewModelScope.launch {
         val allContactsFromBothSources = mutableSetOf<ContactEntity>()
 

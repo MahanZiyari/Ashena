@@ -32,8 +32,12 @@ class DetailsViewModel @Inject constructor(private val repository: DetailsReposi
         repository.updateContact(contactEntity)
     }
 
-    fun updatePhoneContact(contactId: Int) = viewModelScope.launch(Dispatchers.IO) {
-
+    fun updatePhoneContact(contactEntity: ContactEntity): Boolean {
+        var updateResult: Boolean = false
+        viewModelScope.launch {
+            updateResult = repository.modifyPhoneContact(contactEntity)
+        }
+        return updateResult
     }
 
     fun removeContact(contactEntity: ContactEntity) = viewModelScope.launch {
