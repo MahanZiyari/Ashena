@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import ziyari.mahan.ashena.data.models.ContactEntity
 
-@Database(entities = [ContactEntity::class], version = 5, exportSchema = false)
+@Database(entities = [ContactEntity::class], version = 7, exportSchema = false)
 abstract class ContactDatabase: RoomDatabase() {
     abstract fun contactDao(): ContactDao
 }

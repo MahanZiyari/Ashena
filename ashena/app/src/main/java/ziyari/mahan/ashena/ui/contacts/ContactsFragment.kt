@@ -4,9 +4,12 @@ import android.Manifest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -14,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
+import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.databinding.FragmentContactsBinding
 import ziyari.mahan.ashena.ui.addcontacts.AddContactsFragment
 import ziyari.mahan.ashena.utils.Adapters.ContactAdapter
@@ -41,6 +45,12 @@ class ContactsFragment : Fragment() {
     private val sharedViewModel: SharedViewModel by activityViewModels()
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
+
 
 
     override fun onCreateView(
@@ -64,6 +74,8 @@ class ContactsFragment : Fragment() {
                 }
             }
 
+
+
             sharedViewModel.snackbarMessage.observe(viewLifecycleOwner) {
                 Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
             }
@@ -76,6 +88,30 @@ class ContactsFragment : Fragment() {
                 AddContactsFragment().show(parentFragmentManager, AddContactsFragment().tag)
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.contacts_toolbar_menu, menu)
+        val search = menu.findItem(R.id.actionSearch)
+        val searchView = search.actionView as SearchView
+        searchView.queryHint = getString(R.string.search)
+        searchView.setOnCloseListener {
+            //viewModel.getAllContacts()
+            showDebugLog("On Close")
+            true
+        }
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                viewModel.searchForContacts(newText)
+                return true
+            }
+        })
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 
 

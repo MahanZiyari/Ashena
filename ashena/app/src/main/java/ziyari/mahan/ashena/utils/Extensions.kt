@@ -5,6 +5,13 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import contacts.core.entities.Contact
+import contacts.core.util.emails
+import contacts.core.util.groupMemberships
+import contacts.core.util.names
+import contacts.core.util.options
+import contacts.core.util.phones
+import ziyari.mahan.ashena.data.models.ContactEntity
 
 fun Spinner.setUpListWithAdapter(items: List<String>, onItemSelected: (String) -> Unit) {
     val adapter = ArrayAdapter<String>(context, R.layout.simple_spinner_item, items)
@@ -27,4 +34,23 @@ fun String.extractNumbers(): Int {
 
 fun String.removeSpaces(): String {
     return this.replace("\\s".toRegex(), "")
+}
+
+fun Contact.toEntity(): ContactEntity {
+    val number = if (this.phones().toList().isEmpty()) "0000" else this.phones().toList()
+        .first().number
+
+    val email = if (this.emails().toList().isEmpty()) "UnSetted" else this.emails().toList().first().primaryValue
+
+    return ContactEntity(
+        id = this.id.toInt(),
+        firstName = this.names().first().givenName ?: "thinamed",
+        lastName = this.names().first().familyName ?: "Empty",
+        profilePicture = this.photoThumbnailUri.toString(),
+        number = number ?: "",
+        email = email ?: "Null",
+        lookupKey = this.lookupKey,
+        favorites = this.options()?.starred ?: false,
+        isFromPhone = true
+    )
 }

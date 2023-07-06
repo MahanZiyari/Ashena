@@ -16,19 +16,20 @@
             android:id="@+id/contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layoutAnimation="@anim/layout_animation"
             app:layout_constraintTop_toTopOf="parent" />
         <!--FAB-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/add_contact_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_margin="24dp"
             android:src="@drawable/round_add_24"
-            app:tint="?attr/colorOnPrimary"
             app:backgroundTint="?attr/colorPrimaryVariant"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="?attr/colorOnPrimary"
+            tools:ignore="SpeakableTextPresentCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

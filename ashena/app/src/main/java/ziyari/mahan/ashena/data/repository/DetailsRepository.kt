@@ -29,6 +29,7 @@ import ziyari.mahan.ashena.data.database.ContactDao
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.utils.DEBUG_TAG
 import ziyari.mahan.ashena.utils.showDebugLog
+import ziyari.mahan.ashena.utils.toEntity
 import java.net.URI
 import javax.inject.Inject
 
@@ -48,24 +49,9 @@ class DetailsRepository @Inject constructor(
             .where { Contact.Id `in` listOf(id.toLong()) }
             .find().first()
 
-        val number = if (contact.phones().toList().isEmpty()) "0000" else contact.phones().toList().first().number
-        val group = if (contact.groupMemberships().toList().isEmpty()) "UNGroup" else contact.groupMemberships().toList().first().toString()
-        
-        val modelContact = ContactEntity(
-            id = contact.id.toInt(),
-            firstName = contact.names().first().givenName ?: "Unnamed",
-            lastName = contact.names().first().familyName ?: "Empty",
-            profilePicture = contact.photoThumbnailUri.toString(),
-            number = number ?: "",
-            lookupKey = contact.lookupKey,
-            group = group,
-            favorites = contact.options()?.starred ?: false,
-            isFromPhone = true
-        )
+        val modelContact = contact.toEntity()
 
-        showDebugLog("Recieved Contact from API: $modelContact")
         emit(modelContact)
-        
     }
 
 

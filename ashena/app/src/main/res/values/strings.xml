@@ -8,7 +8,7 @@
     <string name="search">search</string>
     <string name="first_name">First Name</string>
     <string name="groups">group</string>
-    <string name="add_to_contacts">Add to contacts</string>
+    <string name="save_button">Save</string>
     <!--<string name="avatar_api">https://ui-avatars.com/api/?background=%1$s?name=%2$s</string>-->
     <string name="avatar_api">https://api.dicebear.com/6.x/initials/png?seed=%1$s&amp;backgroundColor=%2$s</string>
     <string name="user_picture">User Picture</string>

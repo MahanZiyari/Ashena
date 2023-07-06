@@ -22,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="First Name"
+        android:layout_marginTop="16dp"
         app:boxCornerRadiusBottomEnd="10dp"
         app:boxCornerRadiusBottomStart="10dp"
         app:boxCornerRadiusTopEnd="10dp"
@@ -44,7 +45,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-
         android:gravity="top"
         android:hint="Last Name"
         app:boxCornerRadiusBottomEnd="10dp"
@@ -86,73 +86,45 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/contentLay"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/emailTextLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_rounded_stroke"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneNumberTextLayout">
-        <!--Cats-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/categoriesLay"
+        android:layout_marginTop="8dp"
+        android:hint="Email"
+        app:boxCornerRadiusBottomEnd="10dp"
+        app:boxCornerRadiusBottomStart="10dp"
+        app:boxCornerRadiusTopEnd="10dp"
+        app:boxCornerRadiusTopStart="10dp"
+        app:layout_constraintEnd_toEndOf="@id/phoneNumberTextLayout"
+        app:layout_constraintStart_toStartOf="@id/phoneNumberTextLayout"
+        app:layout_constraintTop_toBottomOf="@id/phoneNumberTextLayout"
+        app:startIconDrawable="@drawable/baseline_email_24">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailTextField"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent">
-            <!--Title-->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/groups"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toBottomOf="@+id/cardView2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-            <!--Spinner-->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView2"
-                android:layout_width="150dp"
-                android:layout_height="40dp"
-                android:layout_margin="3dp"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="1dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="wrap_content" />
 
-                <Spinner
-                    android:id="@+id/groupsSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical" />
-
-            </androidx.cardview.widget.CardView>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--Save-->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveContact"
-        android:layout_width="wrap_content"
-        android:layout_height="55dp"
-        android:layout_marginVertical="64dp"
-        android:fontFamily="@font/archivo_black"
-        android:paddingHorizontal="50dp"
-        android:text="@string/add_to_contacts"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="?attr/colorPrimary"
-        app:cornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/contentLay" />
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        app:cornerRadius="10dp"
+        android:text="@string/save_button"
+        app:strokeColor="?attr/colorPrimary"
+        android:textSize="20sp"
+        app:icon="@drawable/baseline_save_24"
+        app:iconGravity="textStart"
+        app:layout_constraintEnd_toEndOf="@+id/phoneNumberTextLayout"
+        app:layout_constraintStart_toStartOf="@id/phoneNumberTextLayout"
+        app:layout_constraintTop_toBottomOf="@id/emailTextLayout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

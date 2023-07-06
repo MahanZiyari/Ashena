@@ -76,6 +76,7 @@ class DetailsFragment : Fragment() {
 
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
+                showDebugLog("Email: ${contact.email}")
                 initializeFavoritesStatus()
                 fillFieldsWithContactInfo()
             }
@@ -154,7 +155,7 @@ class DetailsFragment : Fragment() {
                         contact.number = newPhoneNumber
                         contact.profilePicture = newPicture
 
-                        var updateResult = false
+                        var updateResult: Boolean
                         if (contact.isFromPhone) {
                             // Save to Phone
                             updateResult = viewModel.updatePhoneContact(contact)
@@ -188,18 +189,7 @@ class DetailsFragment : Fragment() {
             lastnameTextField.setText(contact.lastName)
             contactsPictureProfile.load(contact.profilePicture)
             phoneNumberTextField.setText(contact.number)
-            val groups = mutableListOf(
-                Group.FAMILY.name,
-                Group.WORK.name,
-                Group.COSTUMERS.name,
-                Group.FRIENDS.name
-            )
-            val pos = groups.indexOf(contact.group)
-            detailsGroupsSpinner.setUpListWithAdapter(groups) {
-                contact.group = it
-            }
-            detailsGroupsSpinner.setSelection(pos)
-
+            emailTextField.setText(contact.email)
         }
     }
 

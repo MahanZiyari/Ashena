@@ -12,7 +12,7 @@ data class ContactEntity(
     var firstName: String = "",
     var lastName: String = "",
     var number: String = "",
-    var group: String = Group.FAMILY.name,
+    var email: String = "",
     var favorites: Boolean = false,
     var profilePicture: String = "",
     var isFromPhone: Boolean = false

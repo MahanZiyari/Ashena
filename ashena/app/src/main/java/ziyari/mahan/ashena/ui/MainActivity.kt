@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
         binding?.apply {
+            setSupportActionBar(contactsToolbar)
             //Nav
             navController = findNavController(R.id.nav_host)
             bottomNav.setupWithNavController(navController)
@@ -56,11 +57,11 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater: MenuInflater = menuInflater
         inflater.inflate(R.menu.contacts_toolbar_menu, menu)
         return true
-    }
+    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection

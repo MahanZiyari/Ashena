@@ -1,43 +1,36 @@
 package ziyari.mahan.ashena.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.flattenMerge
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.data.repository.ContactHomeScreenRepository
-import ziyari.mahan.ashena.utils.DEBUG_TAG
 import ziyari.mahan.ashena.utils.DataStatus
-import java.util.Timer
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScreenRepository: ContactHomeScreenRepository) :
     ViewModel() {
     var allContacts = MutableLiveData<DataStatus<List<ContactEntity>>>()
 
     fun getAllContactsFromDb() = viewModelScope.launch {
-        contactHomeScreenRepository.getAllContactsFromDatabase().collect {
+        contactHomeScreenRepository.getDatabaseContacts().collect {
             allContacts.postValue(DataStatus.success(it, it.isEmpty()))
         }
     }
 
-    fun getAllContacts() = viewModelScope.launch {
+    fun getAllContacts() = viewModelScope.launch(Dispatchers.IO) {
         val allContactsFromBothSources = mutableSetOf<ContactEntity>()
 
-        contactHomeScreenRepository.getAllContactsFromDatabase().flatMapConcat { phoneContacts ->
+        contactHomeScreenRepository.getDatabaseContacts().flatMapConcat { phoneContacts ->
             allContactsFromBothSources.addAll(phoneContacts)
-            contactHomeScreenRepository.getDeviceContactsUsingReborn()
+            contactHomeScreenRepository.getDeviceContacts()
         }.collect { databaseContacts ->
             allContactsFromBothSources.addAll(databaseContacts)
             val finalContactsList = allContactsFromBothSources
@@ -52,9 +45,41 @@ class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScre
         }
     }
 
-    fun getDeviceContacts() = viewModelScope.launch(Dispatchers.IO) {
-        contactHomeScreenRepository.getContacts().collect { contacts ->
-            allContacts.postValue(DataStatus.success(contacts, contacts.isEmpty()))
+    fun getAllContacts(sortOption: Unit) = viewModelScope.launch(Dispatchers.IO) {
+        val allContactsFromBothSources = mutableSetOf<ContactEntity>()
+
+        contactHomeScreenRepository.getDatabaseContacts().flatMapConcat { phoneContacts ->
+            allContactsFromBothSources.addAll(phoneContacts)
+            contactHomeScreenRepository.getDeviceContacts()
+        }.collect { databaseContacts ->
+            allContactsFromBothSources.addAll(databaseContacts)
+            val finalContactsList = allContactsFromBothSources
+                .toList()
+                .sortedBy { it.firstName }
+            allContacts.postValue(
+                DataStatus.success(
+                    finalContactsList,
+                    finalContactsList.isEmpty()
+                )
+            )
         }
     }
+
+
+    fun searchForContacts(searchQuery: String) = viewModelScope.launch(Dispatchers.IO) {
+        val contactsFound = mutableSetOf<ContactEntity>()
+
+        contactHomeScreenRepository.getDatabaseContactsPartiallyMatchingName(searchQuery)
+            .flatMapConcat { dbResult ->
+                contactsFound.addAll(dbResult)
+                contactHomeScreenRepository.getContactsPartiallyMatchingDisplayName(searchQuery)
+            }.collect { deviceResult ->
+                contactsFound.addAll(deviceResult)
+                val finalResult = contactsFound.toList().sortedBy { it.firstName }
+                allContacts.postValue(
+                    DataStatus.success(finalResult, finalResult.isEmpty())
+                )
+            }
+    }
+
 }

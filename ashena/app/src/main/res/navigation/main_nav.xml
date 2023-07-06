@@ -16,7 +16,7 @@
     <action
         android:id="@+id/action_to_details"
         app:destination="@id/detailsFragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
+        app:enterAnim="@android:anim/slide_in_left"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim"

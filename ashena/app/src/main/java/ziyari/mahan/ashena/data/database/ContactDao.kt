@@ -29,4 +29,7 @@ interface ContactDao {
 
     @Query("SELECT EXISTS (SELECT 1 FROM $CONTACTS_TABLE_NAME WHERE id = :contactID)")
     suspend fun existsContact(contactID: Int): Boolean
+
+    @Query("SELECT * FROM $CONTACTS_TABLE_NAME WHERE firstName LIKE '%' || :searchQuery || '%'  OR lastName LIKE '%' || :searchQuery || '%'")
+    fun seaarchContacts(searchQuery: String): Flow<MutableList<ContactEntity>>
 }
