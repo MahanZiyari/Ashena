@@ -10,13 +10,12 @@
         android:name="ziyari.mahan.ashena.ui.contacts.ContactsFragment"
         android:label="fragment_contacts"
         tools:layout="@layout/fragment_contacts">
-
     </fragment>
     <!--Global action to details fragment-->
     <action
         android:id="@+id/action_to_details"
         app:destination="@id/detailsFragment"
-        app:enterAnim="@android:anim/slide_in_left"
+        app:enterAnim="@anim/nav_default_enter_anim"
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim"

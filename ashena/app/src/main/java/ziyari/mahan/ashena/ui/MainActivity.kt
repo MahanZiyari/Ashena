@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             navController.addOnDestinationChangedListener { _, destination, _ ->
                 if (destination.id == R.id.detailsFragment) {
                     bottomNav.visibility = View.GONE
-                    contactsToolbar.visibility = View.GONE
+                    //contactsToolbar.visibility = View.GONE
                     isOnDetailsScreen = true
                 } else {
                     isOnDetailsScreen = false
@@ -57,11 +57,6 @@ class MainActivity : AppCompatActivity() {
 
         }
     }
-    /*override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.contacts_toolbar_menu, menu)
-        return true
-    }*/
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection

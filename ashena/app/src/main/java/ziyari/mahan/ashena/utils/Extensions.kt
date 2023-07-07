@@ -37,15 +37,15 @@ fun String.removeSpaces(): String {
 }
 
 fun Contact.toEntity(): ContactEntity {
-    val number = if (this.phones().toList().isEmpty()) "0000" else this.phones().toList()
+    val number = if (this.phones().toList().isEmpty()) "" else this.phones().toList()
         .first().number
 
-    val email = if (this.emails().toList().isEmpty()) "UnSetted" else this.emails().toList().first().primaryValue
+    val email = if (this.emails().toList().isEmpty()) "" else this.emails().toList().first().primaryValue
 
     return ContactEntity(
         id = this.id.toInt(),
-        firstName = this.names().first().givenName ?: "thinamed",
-        lastName = this.names().first().familyName ?: "Empty",
+        firstName = this.names().first().givenName ?: "",
+        lastName = this.names().first().familyName ?: "",
         profilePicture = this.photoThumbnailUri.toString(),
         number = number ?: "",
         email = email ?: "Null",

@@ -2,6 +2,7 @@ package ziyari.mahan.ashena.ui.contacts
 
 import android.Manifest
 import android.os.Bundle
+import android.transition.TransitionInflater
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
@@ -48,6 +49,7 @@ class ContactsFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
+        requestToAccessContacts()
     }
 
 
@@ -65,7 +67,6 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
-            requestToAccessContacts()
             viewModel.allContacts.observe(viewLifecycleOwner) {
                 contactAdapter.setData(it.data!!)
                 contacts.apply {
@@ -95,11 +96,6 @@ class ContactsFragment : Fragment() {
         val search = menu.findItem(R.id.actionSearch)
         val searchView = search.actionView as SearchView
         searchView.queryHint = getString(R.string.search)
-        searchView.setOnCloseListener {
-            //viewModel.getAllContacts()
-            showDebugLog("On Close")
-            true
-        }
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {

@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
-import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.ContactItemBinding
+import ziyari.mahan.ashena.utils.generateRandomBlue
 import ziyari.mahan.ashena.utils.generateRandomColor
 import javax.inject.Inject
 
@@ -44,8 +43,10 @@ class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter
         @SuppressLint("SetTextI18n")
         fun bind(item: ContactEntity) {
             binding.apply {
-                contactPic.clipToOutline = true
-                contactPic.load(item.profilePicture)
+                /*contactPic.clipToOutline = true
+                contactPic.load(item.profilePicture)*/
+                contactPic.avatarInitials = item.firstName
+                contactPic.avatarInitialsBackgroundColor = generateRandomBlue()
                 contactName.text = item.firstName + " " + item.lastName
                 contactItemLayout.setOnClickListener {
                     onItemClickListener(item)

@@ -31,5 +31,8 @@ interface ContactDao {
     suspend fun existsContact(contactID: Int): Boolean
 
     @Query("SELECT * FROM $CONTACTS_TABLE_NAME WHERE firstName LIKE '%' || :searchQuery || '%'  OR lastName LIKE '%' || :searchQuery || '%'")
-    fun seaarchContacts(searchQuery: String): Flow<MutableList<ContactEntity>>
+    fun searchContacts(searchQuery: String): Flow<MutableList<ContactEntity>>
+
+    @Query("SELECT * FROM $CONTACTS_TABLE_NAME WHERE favorites = 1")
+    fun getFavoritesContacts(): Flow<MutableList<ContactEntity>>
 }

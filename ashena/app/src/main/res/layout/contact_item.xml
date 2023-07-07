@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/contact_item_layout"
+<androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/contact_item_layout"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,18 +7,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <!--TODO Design contact for listing in contacts fragment-->
-    <com.google.android.material.imageview.ShapeableImageView
+    <io.getstream.avatarview.AvatarView
         android:id="@+id/contact_pic"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:adjustViewBounds="false"
-        app:shapeAppearanceOverlay="@style/Circular"
+        app:avatarViewBorderColor="@color/yellow"
+        app:avatarViewBorderWidth="1dp"
+        app:avatarViewInitialsTextColor="@color/white"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:avatarViewInitials="F"
         android:contentDescription="@string/user_picture"
-        android:outlineProvider="none"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/contact_name"

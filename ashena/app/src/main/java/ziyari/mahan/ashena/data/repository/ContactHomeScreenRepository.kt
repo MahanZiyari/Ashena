@@ -21,7 +21,7 @@ class ContactHomeScreenRepository @Inject constructor(
     lateinit var contactAPI: Contacts
     fun getDatabaseContacts() = contactDao.getAllContacts()
     fun getDatabaseContactsPartiallyMatchingName(searchQuery: String) =
-        contactDao.seaarchContacts(searchQuery)
+        contactDao.searchContacts(searchQuery)
 
     fun getDeviceContacts() = flow {
         val modelContacts = mutableSetOf<ContactEntity>()

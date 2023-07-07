@@ -5,27 +5,27 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import coil.load
+import androidx.transition.TransitionInflater
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
-import ziyari.mahan.ashena.data.models.Group
 import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
 import ziyari.mahan.ashena.utils.PermissionsManager
 import ziyari.mahan.ashena.utils.generateRandomColor
-import ziyari.mahan.ashena.utils.setUpListWithAdapter
 import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
 import ziyari.mahan.ashena.viewmodel.SharedViewModel
@@ -50,8 +50,15 @@ class DetailsFragment : Fragment() {
     private var contact: ContactEntity = ContactEntity()
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+        enterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.slide_left)
+    }
 
-
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.details_toolbar_menu, menu)
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -81,9 +88,7 @@ class DetailsFragment : Fragment() {
                 fillFieldsWithContactInfo()
             }
 
-            //Inflating Menu
-            handleToolbar()
-            // Stating Favorites icon
+            //handleToolbar()
 
             phoneCall.setOnClickListener {
                 val intent = Intent(Intent.ACTION_DIAL)
@@ -98,8 +103,6 @@ class DetailsFragment : Fragment() {
                 intent.setData(Uri.parse("smsto:${contact.number}"))
                 startActivity(intent)
             }
-
-
 
 
         }
@@ -131,7 +134,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun FragmentDetailsBinding.handleToolbar() {
+    /*private fun FragmentDetailsBinding.handleToolbar() {
         detailsToolbar.apply {
             inflateMenu(R.menu.details_toolbar_menu)
             setNavigationIcon(R.drawable.baseline_arrow_back_24)
@@ -166,9 +169,17 @@ class DetailsFragment : Fragment() {
                         }
 
                         if (updateResult)
-                            Snackbar.make(requireView(), "Contact Updated Successfully", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(
+                                requireView(),
+                                "Contact Updated Successfully",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         else
-                            Snackbar.make(requireView(), "Ooops something happened", Snackbar.LENGTH_SHORT).show()
+                            Snackbar.make(
+                                requireView(),
+                                "Ooops something happened",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         true
                     }
 
@@ -181,13 +192,13 @@ class DetailsFragment : Fragment() {
                 }
             }
         }
-    }
+    }*/
 
     private fun fillFieldsWithContactInfo() {
         binding?.apply {
             firstnameTextField.setText(contact.firstName)
             lastnameTextField.setText(contact.lastName)
-            contactsPictureProfile.load(contact.profilePicture)
+            contactsPictureProfile.avatarInitials = contact.firstName
             phoneNumberTextField.setText(contact.number)
             emailTextField.setText(contact.email)
         }
