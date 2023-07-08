@@ -1,7 +1,12 @@
 package ziyari.mahan.ashena.utils
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.net.Uri
 import android.util.Log
+import java.io.IOException
 import java.util.Random
 
 fun checkForEmptyString(vararg strings: String): Boolean {
@@ -31,4 +36,14 @@ fun generateRandomBlue(): Int {
 
 fun showDebugLog(message: String) {
     Log.i(DEBUG_TAG, message)
+}
+
+fun getBitmapFromUri(context: Context,uri: Uri): Bitmap? {
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        BitmapFactory.decodeStream(inputStream)
+    } catch (e: IOException) {
+        e.printStackTrace()
+        null
+    }
 }

@@ -4,10 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil.request.ErrorResult
+import coil.request.ImageRequest
+import io.getstream.avatarview.coil.loadImage
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.FavoriteContactItemBinding
+import ziyari.mahan.ashena.utils.showDebugLog
 import javax.inject.Inject
 
 class FavoritesContactAdapter @Inject constructor() :
@@ -43,9 +48,13 @@ class FavoritesContactAdapter @Inject constructor() :
         @SuppressLint("SetTextI18n")
         fun bind(item: ContactEntity) {
             binding.apply {
-                /*contactProfilePic.clipToOutline = true
-                contactProfilePic.load(item.profilePicture)*/
-                contactProfilePic.avatarInitials = item.firstName
+                contactProfilePic.loadImage(
+                    data = item.profilePicture.toUri(),
+                    onError = { request: ImageRequest, result: ErrorResult ->
+                        showDebugLog("fav adapter: ${result.throwable}")
+                        contactProfilePic.avatarInitials = item.firstName + item.lastName
+                    }
+                )
                 contactDisplayName.text = item.firstName + " " + item.lastName
                 favItem.setOnClickListener {
                     onItemClickListener(item)

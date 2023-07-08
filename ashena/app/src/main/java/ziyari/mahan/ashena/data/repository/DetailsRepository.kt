@@ -1,36 +1,25 @@
 package ziyari.mahan.ashena.data.repository
 
-import android.content.ContentProviderOperation
-import android.content.ContentResolver
-import android.content.ContentUris
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import android.provider.ContactsContract
-import android.util.Log
+import androidx.core.net.toUri
 import contacts.core.Contacts
-import contacts.core.equalTo
 import contacts.core.`in`
-import contacts.core.util.groupMembershipList
-import contacts.core.util.groupMemberships
-import contacts.core.util.lookupKeyIn
-import contacts.core.util.nameList
-import contacts.core.util.names
-import contacts.core.util.options
+import contacts.core.util.PhotoData
 import contacts.core.util.phones
+import contacts.core.util.photoBytes
+import contacts.core.util.photoInputStream
+import contacts.core.util.removePhoto
 import contacts.core.util.setName
+import contacts.core.util.setPhoto
 import contacts.permissions.deleteWithPermission
 import contacts.permissions.updateWithPermission
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.withContext
 import ziyari.mahan.ashena.data.database.ContactDao
 import ziyari.mahan.ashena.data.models.ContactEntity
-import ziyari.mahan.ashena.utils.DEBUG_TAG
+import ziyari.mahan.ashena.utils.getBitmapFromUri
 import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.utils.toEntity
-import java.net.URI
 import javax.inject.Inject
 
 class DetailsRepository @Inject constructor(
@@ -49,14 +38,18 @@ class DetailsRepository @Inject constructor(
             .where { Contact.Id `in` listOf(id.toLong()) }
             .find().first()
 
+        showDebugLog("Repo: ${contact.photoInputStream(contactApi)}")
         val modelContact = contact.toEntity()
 
         emit(modelContact)
     }
 
 
-
     suspend fun modifyPhoneContact(contactEntity: ContactEntity): Boolean {
+
+        showDebugLog("Repo 2: ${contactEntity.profilePicture.byteInputStream()}")
+
+
         val contactToModify = contactApi
             .query()
             .where { Contact.Id `in` listOf(contactEntity.id.toLong()) }
@@ -64,18 +57,25 @@ class DetailsRepository @Inject constructor(
 
         val updateResult = contactApi
             .updateWithPermission()
-            .contacts(contactToModify.mutableCopy {
-                setName {
-                    givenName = contactEntity.firstName
-                    familyName = contactEntity.lastName
+            .contacts(
+                contactToModify.mutableCopy {
+                    if (contactEntity.profilePicture.isNotEmpty()) {
+                        setPhoto(PhotoData.from(getBitmapFromUri(context, contactEntity.profilePicture.toUri())!!))
+                    } else {
+                        removePhoto()
+                    }
+                    setName {
+                        givenName = contactEntity.firstName
+                        familyName = contactEntity.lastName
+                    }
+                    phones().first().apply {
+                        number = contactEntity.number
+                    }
+                    options?.apply {
+                        starred = contactEntity.favorites
+                    }
                 }
-                phones().first().apply {
-                    number = contactEntity.number
-                }
-                options?.apply {
-                    starred = contactEntity.favorites
-                }
-            })
+            )
             .commit()
 
         return updateResult.isSuccessful
@@ -87,7 +87,7 @@ class DetailsRepository @Inject constructor(
             .deleteWithPermission()
             .contactsWithId(id)
             .commit()
-        
+
         return deleteResult.isSuccessful
     }
 }

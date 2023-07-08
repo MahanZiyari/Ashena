@@ -1,6 +1,7 @@
 package ziyari.mahan.ashena.ui.details
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
@@ -12,21 +13,28 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
+import coil.request.ErrorResult
+import coil.request.ImageRequest
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
+import io.getstream.avatarview.coil.loadImage
 import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
 import ziyari.mahan.ashena.utils.PermissionsManager
-import ziyari.mahan.ashena.utils.generateRandomColor
 import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
 import ziyari.mahan.ashena.viewmodel.SharedViewModel
@@ -49,17 +57,51 @@ class DetailsFragment : Fragment() {
     lateinit var permissionsManager: PermissionsManager
     private val args: DetailsFragmentArgs by navArgs()
     private var contact: ContactEntity = ContactEntity()
+    private var isContactFromDevice: Boolean = false
+
+    private val startForProfileImageResult = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        val resultCode = result.resultCode
+        val data = result.data
+
+        if (resultCode == Activity.RESULT_OK) {
+            //Image Uri will not be null for RESULT_OK
+            val fileUri = data?.data!!
+            contact.profilePicture = fileUri.toString()
+            if (isContactFromDevice) viewModel.updatePhoneContact(contact) else viewModel.updateDatabaseContact(contact)
+        } else if (resultCode == ImagePicker.RESULT_ERROR) {
+            Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        // Callback is invoked after the user selects a media item or closes the
+        // photo picker.
+        if (uri != null) {
+            showDebugLog("Selected URI: $uri")
+            contact.profilePicture = uri.toString()
+            if (isContactFromDevice) viewModel.updatePhoneContact(contact) else viewModel.updateDatabaseContact(contact)
+        } else {
+            showDebugLog("Selected URI: $uri")
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
-        enterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.slide_left)
+        isContactFromDevice = args.isContactFromPhone
+        enterTransition =
+            TransitionInflater.from(requireContext()).inflateTransition(R.transition.slide_left)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.details_toolbar_menu, menu)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -69,26 +111,29 @@ class DetailsFragment : Fragment() {
         return binding?.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        val passedId = args.contactId
+        if (isContactFromDevice) {
+            viewModel.getContactFromPhone(passedId)
+        } else {
+            viewModel.getContactFromDatabaseWith(passedId)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding?.apply {
             requestNeededPermissions()
-            val passedId = args.contactId
-            val isContactFromPhone = args.isContactFromPhone
-            if (isContactFromPhone) {
-                viewModel.getContactFromPhone(passedId)
-            } else {
-                viewModel.getContactFromDatabaseWith(passedId)
-            }
 
+            // fetching contact
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
-                initializeFavoritesStatus()
+                showDebugLog("observe State URI: ${contact.profilePicture}")
                 fillFieldsWithContactInfo()
             }
 
-            //handleToolbar()
 
             phoneCall.setOnClickListener {
                 val intent = Intent(Intent.ACTION_DIAL)
@@ -104,12 +149,27 @@ class DetailsFragment : Fragment() {
                 startActivity(intent)
             }
 
+            changePicButton.setOnClickListener {
+                ImagePicker.with(this@DetailsFragment)
+                    .galleryOnly()
+                    .crop()
+                    .createIntent { intent ->
+                        startForProfileImageResult.launch(intent)
+                    }
 
+                // Launch the photo picker and let the user choose images and videos.
+//                pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+
+            }
+
+            removePicButton.setOnClickListener {
+                contact.profilePicture = ""
+                if (isContactFromDevice) viewModel.updatePhoneContact(contact) else viewModel.updateDatabaseContact(contact)
+            }
         }
     }
 
     private fun FragmentDetailsBinding.initializeFavoritesStatus() {
-        showDebugLog("inside fav icon: ${contact.favorites}")
         if (contact.favorites) {
             favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
             favContact.imageTintList =
@@ -134,8 +194,9 @@ class DetailsFragment : Fragment() {
         }
     }
 
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             R.id.save_icon -> {
                 val newFirstName = binding!!.firstnameTextField.text.toString()
                 val newLastName = binding!!.lastnameTextField.text.toString()
@@ -181,12 +242,19 @@ class DetailsFragment : Fragment() {
     }
 
 
-
     private fun fillFieldsWithContactInfo() {
+
         binding?.apply {
+            initializeFavoritesStatus()
             firstnameTextField.setText(contact.firstName)
             lastnameTextField.setText(contact.lastName)
-            contactsPictureProfile.avatarInitials = contact.firstName
+            contactsPictureProfile.loadImage(
+                data = contact.profilePicture,
+                onError = { request: ImageRequest, result: ErrorResult ->
+                    showDebugLog("Error: ${result.throwable}")
+                    contactsPictureProfile.avatarInitials = contact.firstName + contact.lastName
+                }
+            )
             phoneNumberTextField.setText(contact.number)
             emailTextField.setText(contact.email)
         }

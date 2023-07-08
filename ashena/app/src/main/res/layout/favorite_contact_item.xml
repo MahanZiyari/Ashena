@@ -14,7 +14,6 @@
         android:layout_gravity="center"
         app:avatarViewBorderColor="?attr/colorOnSurface"
         app:avatarViewBorderWidth="1dp"
-        app:avatarViewInitials="F"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

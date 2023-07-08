@@ -83,4 +83,6 @@ dependencies {
     implementation 'com.github.vestrel00.contacts-android:permissions:0.3.0'
     // Avatar View
     implementation "io.getstream:avatarview-coil:1.0.7"
+    // ImagePicker
+    implementation 'com.github.dhaval2404:imagepicker:2.1'
 }

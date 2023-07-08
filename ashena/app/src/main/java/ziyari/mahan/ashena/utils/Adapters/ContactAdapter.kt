@@ -4,8 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import coil.request.ErrorResult
+import coil.request.ImageRequest
+import io.getstream.avatarview.coil.loadImage
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.ContactItemBinding
 import ziyari.mahan.ashena.utils.generateRandomBlue
@@ -43,10 +47,12 @@ class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter
         @SuppressLint("SetTextI18n")
         fun bind(item: ContactEntity) {
             binding.apply {
-                /*contactPic.clipToOutline = true
-                contactPic.load(item.profilePicture)*/
-                contactPic.avatarInitials = item.firstName + item.lastName
-                contactPic.avatarInitialsBackgroundColor = generateRandomBlue()
+                contactPic.loadImage(
+                    data = item.profilePicture.toUri(),
+                    onError = {request: ImageRequest, result: ErrorResult ->
+                        contactPic.avatarInitials = item.firstName + item.lastName
+                    }
+                )
                 contactName.text = item.firstName + " " + item.lastName
                 contactItemLayout.setOnClickListener {
                     onItemClickListener(item)

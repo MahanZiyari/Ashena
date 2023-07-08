@@ -46,11 +46,11 @@ fun Contact.toEntity(): ContactEntity {
         id = this.id.toInt(),
         firstName = this.names().first().givenName ?: "",
         lastName = this.names().first().familyName ?: "",
-        profilePicture = this.photoThumbnailUri.toString(),
+        profilePicture = this.photoUri.toString(),
         number = number ?: "",
         email = email ?: "Null",
         lookupKey = this.lookupKey,
         favorites = this.options()?.starred ?: false,
-        isFromPhone = true
+        isFromPhone = true,
     )
 }
