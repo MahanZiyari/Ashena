@@ -29,7 +29,6 @@ class AddContactsFragment : BottomSheetDialogFragment() {
 
     //Other
     private val viewModel: AddContactViewModel by viewModels()
-    private var groups = mutableListOf<String>()
     @Inject lateinit var contactEntity: ContactEntity
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,8 +58,6 @@ class AddContactsFragment : BottomSheetDialogFragment() {
                 contactEntity.lastName = lastName
                 contactEntity.number = number
                 contactEntity.email = email
-//                contactEntity.profilePicture = context?.getString(R.string.avatar_api, firstName)!!
-                contactEntity.profilePicture = "https://api.dicebear.com/6.x/initials/png?seed=$firstName&backgroundColor=${generateRandomColor()}"
                 if (checkForEmptyString(firstName, lastName, number)) {
                     viewModel.addContactToDatabase(contactEntity)
                     dismiss()

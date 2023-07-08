@@ -57,8 +57,8 @@ class FavoritesFragment : Fragment() {
 
             viewModel.getAllFavoritesContacts()
             viewModel.favContacts.observe(viewLifecycleOwner) {
+                showEmptyLayout(it.isEmpty)
                 favoritesContactAdapter.setData(it.data!!)
-                showDebugLog("favs: ${it.data}")
                 favContacts.apply {
                     layoutManager = StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL)
                     adapter = favoritesContactAdapter
@@ -69,6 +69,16 @@ class FavoritesFragment : Fragment() {
                 val direction = ContactsFragmentDirections.actionToDetails(contactEntity.id, contactEntity.isFromPhone)
                 findNavController().navigate(direction)
             }
+        }
+    }
+
+    private fun FragmentFavoritesBinding.showEmptyLayout(isEmpty: Boolean) {
+        if (isEmpty) {
+            favContacts.visibility = View.GONE
+            emptyView.visibility = View.VISIBLE
+        } else {
+            favContacts.visibility = View.VISIBLE
+            emptyView.visibility = View.GONE
         }
     }
 }

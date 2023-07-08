@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.favorites.FavoritesFragment">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <include layout="@layout/empty_content"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fav_contacts"
         android:layout_width="match_parent"

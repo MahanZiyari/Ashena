@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -83,7 +84,6 @@ class DetailsFragment : Fragment() {
 
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
-                showDebugLog("Email: ${contact.email}")
                 initializeFavoritesStatus()
                 fillFieldsWithContactInfo()
             }
@@ -134,65 +134,53 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    /*private fun FragmentDetailsBinding.handleToolbar() {
-        detailsToolbar.apply {
-            inflateMenu(R.menu.details_toolbar_menu)
-            setNavigationIcon(R.drawable.baseline_arrow_back_24)
-            setNavigationOnClickListener {
-                findNavController().navigateUp()
-            }
-            setOnMenuItemClickListener {
-                when (it.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.save_icon -> {
+                val newFirstName = binding!!.firstnameTextField.text.toString()
+                val newLastName = binding!!.lastnameTextField.text.toString()
+                val newPhoneNumber = binding!!.phoneNumberTextField.text.toString()
+                val newEmailAddress = binding!!.emailTextField.text.toString()
+                contact.firstName = newFirstName
+                contact.lastName = newLastName
+                contact.number = newPhoneNumber
+                contact.email = newEmailAddress
 
-                    R.id.save_icon -> {
-                        val newFirstName = firstnameTextField.text.toString()
-                        val newLastName = lastnameTextField.text.toString()
-                        val newPhoneNumber = phoneNumberTextField.text.toString()
-                        val newPicture = resources.getString(
-                            R.string.avatar_api,
-                            newFirstName,
-                            generateRandomColor()
-                        )
-                        contact.firstName = newFirstName
-                        contact.lastName = newLastName
-                        contact.number = newPhoneNumber
-                        contact.profilePicture = newPicture
-
-                        var updateResult: Boolean
-                        if (contact.isFromPhone) {
-                            // Save to Phone
-                            updateResult = viewModel.updatePhoneContact(contact)
-                        } else {
-                            // Save to DB
-                            viewModel.updateDatabaseContact(contact)
-                            updateResult = true
-                        }
-
-                        if (updateResult)
-                            Snackbar.make(
-                                requireView(),
-                                "Contact Updated Successfully",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-                        else
-                            Snackbar.make(
-                                requireView(),
-                                "Ooops something happened",
-                                Snackbar.LENGTH_SHORT
-                            ).show()
-                        true
-                    }
-
-                    R.id.trash_icon -> {
-                        showDeleteConfirmationWarning()
-                        true
-                    }
-
-                    else -> false
+                var updateResult: Boolean
+                if (contact.isFromPhone) {
+                    // Save to Phone
+                    updateResult = viewModel.updatePhoneContact(contact)
+                } else {
+                    // Save to DB
+                    viewModel.updateDatabaseContact(contact)
+                    updateResult = true
                 }
+
+                if (updateResult)
+                    Snackbar.make(
+                        requireView(),
+                        "Contact Updated Successfully",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                else
+                    Snackbar.make(
+                        requireView(),
+                        "Ooops something happened",
+                        Snackbar.LENGTH_SHORT
+                    ).show()
+                true
             }
+
+            R.id.trash_icon -> {
+                showDeleteConfirmationWarning()
+                true
+            }
+
+            else -> false
         }
-    }*/
+    }
+
+
 
     private fun fillFieldsWithContactInfo() {
         binding?.apply {
@@ -218,15 +206,18 @@ class DetailsFragment : Fragment() {
                 // Respond to positive button press
                 if (contact.isFromPhone) {
                     deleteResult = viewModel.removeContactFromDevice(contact.id.toLong())
+                    if (deleteResult) {
+                        dialog.dismiss()
+                        sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
+                        findNavController().navigateUp()
+                    } else {
+                        Toast.makeText(requireContext(), "Error: ", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     viewModel.removeContact(contact)
-                }
-                if (deleteResult) {
                     dialog.dismiss()
                     sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
                     findNavController().navigateUp()
-                } else {
-                    Toast.makeText(requireContext(), "Error: ", Toast.LENGTH_SHORT).show()
                 }
             }.show()
     }

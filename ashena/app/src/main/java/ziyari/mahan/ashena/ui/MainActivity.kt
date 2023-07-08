@@ -19,6 +19,7 @@ import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import ziyari.mahan.ashena.R
 import ziyari.mahan.ashena.databinding.ActivityMainBinding
+import ziyari.mahan.ashena.utils.showDebugLog
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -58,8 +59,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        return true
-    }
 }

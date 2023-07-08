@@ -11,6 +11,7 @@ import kotlinx.coroutines.launch
 import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.data.repository.ContactHomeScreenRepository
 import ziyari.mahan.ashena.utils.DataStatus
+import ziyari.mahan.ashena.utils.SortOption
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -45,7 +46,7 @@ class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScre
         }
     }
 
-    fun getAllContacts(sortOption: Unit) = viewModelScope.launch(Dispatchers.IO) {
+    fun getAllContacts(sortOption: SortOption) = viewModelScope.launch(Dispatchers.IO) {
         val allContactsFromBothSources = mutableSetOf<ContactEntity>()
 
         contactHomeScreenRepository.getDatabaseContacts().flatMapConcat { phoneContacts ->
@@ -53,9 +54,29 @@ class ContactHomeScreenViewModel @Inject constructor(private val contactHomeScre
             contactHomeScreenRepository.getDeviceContacts()
         }.collect { databaseContacts ->
             allContactsFromBothSources.addAll(databaseContacts)
-            val finalContactsList = allContactsFromBothSources
+            var finalContactsList = listOf<ContactEntity>()
+            allContactsFromBothSources
                 .toList()
-                .sortedBy { it.firstName }
+                .apply {
+                    when (sortOption) {
+                        SortOption.FIRST_NAME_ASC -> {
+                            finalContactsList = sortedBy { it.firstName }
+                        }
+
+                        SortOption.FIRST_NAME_DEC -> {
+                            finalContactsList = sortedByDescending { it.firstName }
+                        }
+
+                        SortOption.LAST_NAME_ASC -> {
+                            finalContactsList = sortedBy { it.lastName }
+                        }
+
+                        SortOption.LAST_NAME_DEC -> {
+                            finalContactsList = sortedByDescending { it.lastName }
+
+                        }
+                    }
+                }
             allContacts.postValue(
                 DataStatus.success(
                     finalContactsList,

@@ -2,14 +2,13 @@ package ziyari.mahan.ashena.ui.contacts
 
 import android.Manifest
 import android.os.Bundle
-import android.transition.TransitionInflater
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -23,6 +22,7 @@ import ziyari.mahan.ashena.databinding.FragmentContactsBinding
 import ziyari.mahan.ashena.ui.addcontacts.AddContactsFragment
 import ziyari.mahan.ashena.utils.Adapters.ContactAdapter
 import ziyari.mahan.ashena.utils.PermissionsManager
+import ziyari.mahan.ashena.utils.SortOption
 import ziyari.mahan.ashena.utils.showDebugLog
 import ziyari.mahan.ashena.viewmodel.ContactHomeScreenViewModel
 import ziyari.mahan.ashena.viewmodel.SharedViewModel
@@ -64,10 +64,16 @@ class ContactsFragment : Fragment() {
         return binding?.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.getAllContacts()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
             viewModel.allContacts.observe(viewLifecycleOwner) {
+                showEmptyLayout(it.isEmpty)
                 contactAdapter.setData(it.data!!)
                 contacts.apply {
                     layoutManager = LinearLayoutManager(context)
@@ -91,6 +97,17 @@ class ContactsFragment : Fragment() {
         }
     }
 
+    private fun FragmentContactsBinding.showEmptyLayout(isEmpty: Boolean) {
+        if (isEmpty) {
+            contacts.visibility = View.GONE
+            emptyView.visibility = View.VISIBLE
+        } else {
+            contacts.visibility = View.VISIBLE
+            emptyView.visibility = View.GONE
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.contacts_toolbar_menu, menu)
         val search = menu.findItem(R.id.actionSearch)
@@ -110,6 +127,34 @@ class ContactsFragment : Fragment() {
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        showDebugLog("method Entry")
+        return when(item.itemId) {
+            R.id.first_name_asc -> {
+                viewModel.getAllContacts(SortOption.FIRST_NAME_ASC)
+                showDebugLog("Selected option: $item")
+                true
+            }
+            R.id.last_name_asc -> {
+                viewModel.getAllContacts(SortOption.LAST_NAME_ASC)
+                showDebugLog("Selected option: $item")
+                true
+            }
+            R.id.first_name_dec -> {
+                viewModel.getAllContacts(SortOption.FIRST_NAME_DEC)
+                showDebugLog("Selected option: $item")
+                true
+            }
+            R.id.last_name_dec -> {
+                viewModel.getAllContacts(SortOption.LAST_NAME_DEC)
+                showDebugLog("Selected option: $item")
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
 
     private fun requestToAccessContacts() {
         PermissionX.init(this)
@@ -124,12 +169,9 @@ class ContactsFragment : Fragment() {
             }
             .request { allGranted, grantedList, deniedList ->
                 if (allGranted) {
-                    showDebugLog("All Permission are Already Granted")
                     viewModel.getAllContacts()
                 } else {
                     viewModel.getAllContactsFromDb()
-                    showDebugLog("These permissions are denied: $deniedList")
-                    showDebugLog("These permissions are granted: $grantedList")
                 }
             }
     }

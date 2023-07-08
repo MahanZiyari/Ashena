@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.contacts.ContactsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,6 +12,17 @@
         android:layout_height="match_parent">
         <!--Toolbar-->
 
+        <!--empty content-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/empty_view"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include layout="@layout/empty_content" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
         <!--Contacts List-->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/contacts"
@@ -32,5 +43,6 @@
             app:tint="?attr/colorOnPrimary"
             tools:ignore="SpeakableTextPresentCheck" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </FrameLayout>

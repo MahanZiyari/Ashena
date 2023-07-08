@@ -12,12 +12,18 @@
         app:showAsAction="ifRoom|collapseActionView" />
 
     <item
-        android:title="Sort By">
+        android:title="Sort By"
+        android:id="@+id/sort">
         <menu>
             <group>
-                <item android:title="First Name" />
-                <item android:title="Last Name" />
-                <item android:title="Group" />
+                <item android:title="First Name"
+                    android:id="@+id/first_name_asc"/>
+                <item android:title="Last Name"
+                    android:id="@+id/last_name_asc"/>
+                <item android:title="First Name descending"
+                    android:id="@+id/first_name_dec"/>
+                <item android:title="Last Name descending"
+                    android:id="@+id/last_name_dec"/>
             </group>
         </menu>
     </item>

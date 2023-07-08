@@ -45,7 +45,7 @@ class ContactAdapter @Inject constructor() : RecyclerView.Adapter<ContactAdapter
             binding.apply {
                 /*contactPic.clipToOutline = true
                 contactPic.load(item.profilePicture)*/
-                contactPic.avatarInitials = item.firstName
+                contactPic.avatarInitials = item.firstName + item.lastName
                 contactPic.avatarInitialsBackgroundColor = generateRandomBlue()
                 contactName.text = item.firstName + " " + item.lastName
                 contactItemLayout.setOnClickListener {
