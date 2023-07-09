@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.net.Uri
 import android.util.Log
+import android.widget.Toast
 import java.io.IOException
 import java.util.Random
 
@@ -46,4 +47,8 @@ fun getBitmapFromUri(context: Context,uri: Uri): Bitmap? {
         e.printStackTrace()
         null
     }
+}
+
+fun toastMessage(context: Context, msg: String) {
+    Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
 }

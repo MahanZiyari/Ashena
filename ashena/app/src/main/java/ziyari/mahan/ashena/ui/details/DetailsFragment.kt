@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,9 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -36,6 +36,7 @@ import ziyari.mahan.ashena.data.models.ContactEntity
 import ziyari.mahan.ashena.databinding.FragmentDetailsBinding
 import ziyari.mahan.ashena.utils.PermissionsManager
 import ziyari.mahan.ashena.utils.showDebugLog
+import ziyari.mahan.ashena.utils.toastMessage
 import ziyari.mahan.ashena.viewmodel.DetailsViewModel
 import ziyari.mahan.ashena.viewmodel.SharedViewModel
 import javax.inject.Inject
@@ -50,7 +51,6 @@ class DetailsFragment : Fragment() {
 
     // ViewModel
     private val viewModel: DetailsViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     // Other
     @Inject
@@ -69,11 +69,27 @@ class DetailsFragment : Fragment() {
             //Image Uri will not be null for RESULT_OK
             val fileUri = data?.data!!
             contact.profilePicture = fileUri.toString()
-            if (isContactFromDevice) viewModel.updatePhoneContact(contact) else viewModel.updateDatabaseContact(contact)
+            if (isContactFromDevice){
+                viewModel.updatePhoneContact(contact)
+                toastMessage(requireContext(), "Photo will be updated next time")
+            } else {
+                viewModel.updateDatabaseContact(contact)
+                toastMessage(requireContext(), "Photo will be updated next time")
+            }
         } else if (resultCode == ImagePicker.RESULT_ERROR) {
             Toast.makeText(requireContext(), ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun DetailsFragment.refreshFragment() {
+        fragmentManager?.apply {
+            beginTransaction()
+            beginTransaction()
+                .detach(this@DetailsFragment)
+                .attach(this@DetailsFragment)
+                .commit()
         }
     }
 
@@ -130,7 +146,6 @@ class DetailsFragment : Fragment() {
             // fetching contact
             viewModel.contact.observe(viewLifecycleOwner) {
                 contact = it ?: ContactEntity()
-                showDebugLog("observe State URI: ${contact.profilePicture}")
                 fillFieldsWithContactInfo()
             }
 
@@ -164,12 +179,31 @@ class DetailsFragment : Fragment() {
 
             removePicButton.setOnClickListener {
                 contact.profilePicture = ""
-                if (isContactFromDevice) viewModel.updatePhoneContact(contact) else viewModel.updateDatabaseContact(contact)
+                if (isContactFromDevice){
+                    viewModel.updatePhoneContact(contact)
+                    toastMessage(requireContext(), "Photo will be updated next time")
+                } else {
+                    viewModel.updateDatabaseContact(contact)
+                    toastMessage(requireContext(), "Photo will be updated next time")
+                }
             }
         }
     }
 
     private fun FragmentDetailsBinding.initializeFavoritesStatus() {
+        tintStarIcon()
+        favContact.setOnClickListener {
+            contact.favorites = !contact.favorites
+            tintStarIcon()
+        }
+    }
+
+    private fun FragmentDetailsBinding.tintStarIcon() {
+        val colorAttr = com.google.android.material.R.attr.colorOnSurface
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(colorAttr, typedValue, true)
+        val colorRes = typedValue.resourceId
+        val color = ContextCompat.getColor(requireContext(), colorRes)
         if (contact.favorites) {
             favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
             favContact.imageTintList =
@@ -177,20 +211,7 @@ class DetailsFragment : Fragment() {
         } else {
             favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
             favContact.imageTintList =
-                ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
-        }
-
-        favContact.setOnClickListener {
-            contact.favorites = !contact.favorites
-            if (contact.favorites) {
-                favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_24))
-                favContact.imageTintList =
-                    ColorStateList.valueOf(resources.getColor(R.color.yellow))
-            } else {
-                favContact.setImageDrawable(resources.getDrawable(R.drawable.baseline_star_outline_24))
-                favContact.imageTintList =
-                    ColorStateList.valueOf(resources.getColor(R.color.deepKoamaru))
-            }
+                ColorStateList.valueOf(color)
         }
     }
 
@@ -276,16 +297,24 @@ class DetailsFragment : Fragment() {
                     deleteResult = viewModel.removeContactFromDevice(contact.id.toLong())
                     if (deleteResult) {
                         dialog.dismiss()
-                        sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
-                        findNavController().navigateUp()
+                        Toast.makeText(
+                            requireContext(),
+                            "Contact Deleted Successfully",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        findNavController().popBackStack()
                     } else {
                         Toast.makeText(requireContext(), "Error: ", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     viewModel.removeContact(contact)
                     dialog.dismiss()
-                    sharedViewModel.showSnackbar("${contact.firstName} Deleted Successfully")
-                    findNavController().navigateUp()
+                    Toast.makeText(
+                        requireContext(),
+                        "Contact Deleted Successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    findNavController().popBackStack()
                 }
             }.show()
     }
@@ -296,24 +325,16 @@ class DetailsFragment : Fragment() {
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(
                     deniedList,
-                    "Core fundamental are based on these permissions",
+                    "in order to show and manage your contacts the app need to have access to these permissions",
                     "OK",
                     "Cancel"
                 )
             }
             .request { allGranted, grantedList, deniedList ->
                 if (allGranted) {
-                    Toast.makeText(
-                        requireContext(),
-                        "All permissions are granted",
-                        Toast.LENGTH_LONG
-                    ).show()
+
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "These permissions are denied: $deniedList",
-                        Toast.LENGTH_LONG
-                    ).show()
+
                 }
             }
     }

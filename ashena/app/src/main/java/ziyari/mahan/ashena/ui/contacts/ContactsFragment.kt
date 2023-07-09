@@ -43,7 +43,6 @@ class ContactsFragment : Fragment() {
     @Inject
     lateinit var permissionsManager: PermissionsManager
     private val viewModel: ContactHomeScreenViewModel by viewModels()
-    private val sharedViewModel: SharedViewModel by activityViewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,9 +82,7 @@ class ContactsFragment : Fragment() {
 
 
 
-            sharedViewModel.snackbarMessage.observe(viewLifecycleOwner) {
-                Snackbar.make(view, it, Snackbar.LENGTH_SHORT).show()
-            }
+
             contactAdapter.setOnItemClickListener { contactEntity ->
                 val direction = ContactsFragmentDirections.actionToDetails(contactEntity.id, contactEntity.isFromPhone)
                 findNavController().navigate(direction)
@@ -162,7 +159,7 @@ class ContactsFragment : Fragment() {
             .onExplainRequestReason { scope, deniedList ->
                 scope.showRequestReasonDialog(
                     deniedList,
-                    "Core fundamental are based on these permissions",
+                    "in order to show and manage your contacts the app need to have access to these permissions",
                     "OK",
                     "Cancel"
                 )

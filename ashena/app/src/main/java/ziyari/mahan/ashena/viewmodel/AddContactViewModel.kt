@@ -14,16 +14,17 @@ import ziyari.mahan.ashena.data.repository.AddContactRepository
 
 @HiltViewModel
 class AddContactViewModel @Inject constructor(private val repository: AddContactRepository) : ViewModel() {
-    val groups = MutableLiveData<MutableList<String>>()
-
-    fun loadGroups() = viewModelScope.launch(Dispatchers.IO) {
-        val data = mutableListOf(Group.FAMILY.name, Group.WORK.name, Group.COSTUMERS.name, Group.FRIENDS.name)
-        groups.postValue(data)
-    }
 
     fun addContactToDatabase(contactEntity: ContactEntity) = viewModelScope.launch(Dispatchers.IO) {
         repository.insertContact(contactEntity)
     }
 
 
+    fun insertContactToDevice(contactEntity: ContactEntity): Boolean {
+        var insertResult = false
+        viewModelScope.launch(Dispatchers.IO) {
+            insertResult = repository.insertToDevice(contactEntity)
+        }
+        return insertResult
+    }
 }
