@@ -1,3 +1,5 @@
+![Logo](Logo/AshenaLogo.svg)
+
 
 # Ashena
 
